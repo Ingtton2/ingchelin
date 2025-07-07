@@ -40,20 +40,6 @@ npm start
 http://localhost:3000
 ```
 
-## 🔧 환경 설정
-
-### Google Maps API 설정
-지도 기능을 사용하려면 Google Maps API 키가 필요합니다:
-
-1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트 생성
-2. Maps JavaScript API 활성화
-3. API 키 생성
-4. `src/pages/Map.js` 파일의 `GOOGLE_MAPS_API_KEY` 변수에 API 키 입력
-
-```javascript
-const GOOGLE_MAPS_API_KEY = 'your-api-key-here';
-```
-
 ## 📱 사용법
 
 ### 테스트 계정

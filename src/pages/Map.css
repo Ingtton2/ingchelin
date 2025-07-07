@@ -1,0 +1,1461 @@
+.map-container {
+  max-width: 100%;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.location-controls {
+  text-align: center;
+  margin: 1.5rem 0 0 0;
+}
+
+.location-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 0.875rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+  white-space: nowrap;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.location-btn:hover {
+  background: #0056CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.location-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #8E8E93;
+}
+
+.location-btn.loading:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.nearby-section {
+  margin-top: 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.nearby-section h3 {
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nearby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.nearby-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nearby-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nearby-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.nearby-header h4 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: 600;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.distance {
+  background: #007AFF;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.nearby-card p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nearby-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.nearby-actions .favorite-btn,
+.nearby-actions .detail-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.nearby-actions .favorite-btn {
+  background: #FF3B30;
+  color: white;
+}
+
+.nearby-actions .favorite-btn:hover {
+  background: #D70015;
+  transform: translateY(-1px);
+}
+
+.nearby-actions .favorite-btn.favorited {
+  background: #34C759;
+}
+
+.nearby-actions .detail-btn {
+  background: #007AFF;
+  color: white;
+}
+
+.nearby-actions .detail-btn:hover {
+  background: #0056CC;
+  transform: translateY(-1px);
+}
+
+.map-header {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.map-header h2 {
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.map-header p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.map-wrapper {
+  margin: 0 0 1rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  background: white;
+  border: 1px solid #e0e0e0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007AFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 마커 라벨 스타일 */
+.marker-label {
+  position: relative;
+  z-index: 10;
+}
+
+.marker-label-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateX(-50%);
+  margin-bottom: 4px;
+  text-align: center;
+  min-width: 80px;
+  backdrop-filter: blur(8px);
+}
+
+.marker-label-content .restaurant-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.marker-label-content .visit-status {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.marker-label-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* 방문 상태 버튼 스타일 */
+.visit-status-buttons {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.visit-status-buttons h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  font-weight: 600;
+  text-align: center;
+}
+
+.visit-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.visit-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  color: #666;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 80px;
+}
+
+.visit-btn:hover {
+  background: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.visit-btn.liked {
+  border-color: #34C759;
+  color: #34C759;
+  background: #F0FFF4;
+}
+
+.visit-btn.liked.active {
+  background: #34C759;
+  color: white;
+  border-color: #34C759;
+}
+
+.visit-btn.disliked {
+  border-color: #FF3B30;
+  color: #FF3B30;
+  background: #FFF5F5;
+}
+
+.visit-btn.disliked.active {
+  background: #FF3B30;
+  color: white;
+  border-color: #FF3B30;
+}
+
+.visit-btn.not-visited {
+  border-color: #FF9500;
+  color: #FF9500;
+  background: #FFF9F0;
+}
+
+.visit-btn.not-visited.active {
+  background: #FF9500;
+  color: white;
+  border-color: #FF9500;
+}
+
+/* 범례 */
+.map-legend {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+  border: 1px solid #e0e0e0;
+}
+
+.map-legend h3 {
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.legend-items {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.legend-section {
+  text-align: center;
+}
+
+.legend-section h4 {
+  margin-bottom: 0.75rem;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  background: #e9ecef;
+}
+
+.legend-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 600;
+}
+
+.legend-icon.visit-liked {
+  background: #34C759;
+}
+
+.legend-icon.visit-disliked {
+  background: #FF3B30;
+}
+
+.legend-icon.visit-not-visited {
+  background: #FF9500;
+}
+
+.legend-text {
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 0.85rem;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: #f8f9fa;
+  color: #1a1a1a;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.restaurant-info-detail {
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.info-row:hover {
+  background: #e9ecef;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #1a1a1a;
+  min-width: 100px;
+  margin-right: 1rem;
+  font-size: 0.9rem;
+}
+
+.info-value {
+  color: #666;
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.modal-actions .favorite-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-actions .favorite-btn:hover {
+  background: #0056CC;
+  transform: translateY(-1px);
+}
+
+.modal-actions .favorite-btn.favorited {
+  background: #FF3B30;
+}
+
+.modal-actions .favorite-btn.favorited:hover {
+  background: #D70015;
+}
+
+/* 지도 사용 팁 */
+.map-tips {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.tip-item {
+  background: #f0f8ff;
+  color: #007AFF;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid #e0f2ff;
+  transition: all 0.2s ease;
+}
+
+.tip-item:hover {
+  background: #e0f2ff;
+  transform: translateY(-1px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .map-container {
+    padding: 0.25rem;
+  }
+  
+  .map-header {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .map-header h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .search-container {
+    max-width: 100%;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+  
+  .search-input {
+    font-size: 0.9rem;
+    padding: 0.75rem 2.5rem 0.75rem 0.875rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .clear-search-btn {
+    right: 0.75rem;
+  }
+  
+  .map-content {
+    flex-direction: column;
+    height: auto;
+    gap: 1rem;
+  }
+  
+  .filter-panel {
+    width: 100%;
+    max-height: 400px;
+    order: 2;
+  }
+  
+  .map-section {
+    order: 1;
+    height: 60vh;
+  }
+  
+  .map-location-overlay {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .map-location-overlay .location-btn {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .mini-popup {
+    width: 250px;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  
+  .mini-popup-header h4 {
+    font-size: 0.9rem;
+  }
+  
+  .mini-popup-content {
+    padding: 0.75rem;
+  }
+  
+  .mini-popup-rating .stars {
+    gap: 0.05rem;
+  }
+  
+  .mini-popup-rating .star {
+    font-size: 0.8rem;
+  }
+  
+  .mini-popup-info p {
+    font-size: 0.8rem;
+  }
+  
+  .mini-popup-actions .favorite-btn,
+  .mini-popup-actions .detail-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem;
+  }
+  
+  .filter-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  
+  .filter-header h3 {
+    font-size: 1rem;
+  }
+  
+  .toggle-all-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .category-filters {
+    gap: 0.5rem;
+  }
+  
+  .category-filter-btn {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .marker-status-filters {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+  
+  .marker-status-filters h4 {
+    font-size: 0.9rem;
+  }
+  
+  .marker-status-options {
+    gap: 0.5rem;
+  }
+  
+  .marker-status-option {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .selected-restaurant-info {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+  }
+  
+  .restaurant-card {
+    padding: 0.75rem;
+  }
+  
+  .restaurant-card h5 {
+    font-size: 1rem;
+  }
+  
+  .restaurant-description {
+    font-size: 0.85rem;
+  }
+  
+  .restaurant-details p {
+    font-size: 0.8rem;
+  }
+  
+  .favorite-btn {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+}
+
+/* 메인 콘텐츠 영역 */
+.map-content {
+  display: flex;
+  gap: 1rem;
+  height: calc(100vh - 200px);
+}
+
+/* 왼쪽 필터 패널 */
+.filter-panel {
+  width: 350px;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-header h3 {
+  color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.toggle-all-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-all-btn:hover {
+  background: #0056CC;
+  transform: translateY(-1px);
+}
+
+.category-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-filter-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #666;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.category-filter-btn:hover {
+  border-color: #007AFF;
+  color: #007AFF;
+  background: #f0f8ff;
+}
+
+.category-filter-btn.active {
+  background: #007AFF;
+  color: white;
+  border-color: #007AFF;
+}
+
+.category-filter-btn.active:hover {
+  background: #0056CC;
+}
+
+/* 선택된 맛집 정보 */
+.selected-restaurant-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.selected-restaurant-info h4 {
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.restaurant-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.restaurant-card h5 {
+  color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.restaurant-category {
+  color: #007AFF;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.restaurant-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.1rem;
+}
+
+.star {
+  color: #ddd;
+  font-size: 0.9rem;
+}
+
+.star.filled {
+  color: #FFD700;
+}
+
+.rating-text {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.restaurant-description {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+.restaurant-details {
+  margin-bottom: 1rem;
+}
+
+.restaurant-details p {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.favorite-btn {
+  width: 100%;
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background: #0056CC;
+}
+
+.favorite-btn.favorited {
+  background: #FF3B30;
+}
+
+.favorite-btn.favorited:hover {
+  background: #D70015;
+}
+
+/* 오른쪽 지도 */
+.map-section {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  overflow: visible;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+/* 지도 위 위치 버튼 오버레이 */
+.map-location-overlay {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.map-location-overlay .location-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #007AFF;
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+}
+
+.map-location-overlay .location-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #0056CC;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.map-location-overlay .location-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  color: #8E8E93;
+}
+
+.map-location-overlay .location-btn.loading:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 지도 통계 */
+.map-stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #007AFF;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 상단 컨트롤 영역 */
+.map-controls {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.control-section h2 {
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+/* 검색 섹션 */
+.search-section {
+  margin-bottom: 1.5rem;
+}
+
+.search-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto 0.5rem auto;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input {
+  width: 400px;
+  padding: 0.875rem 3rem 0.875rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #8E8E93;
+  font-size: 0.9rem;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 8.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #FF3B30;
+  border: none;
+  font-size: 0.8rem;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-search-btn:hover {
+  background: #D70015;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.search-results {
+  text-align: center;
+}
+
+.results-count {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* 필터 섹션 */
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+/* 마커 범례 */
+.map-legend-overlay {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+}
+
+.legend-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid #e0e0e0;
+  max-width: 250px;
+}
+
+.legend-container h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.legend-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: white;
+  border: 1px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.legend-categories h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.category-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.category-legend span {
+  background: #f8f9fa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+/* 마커 상태 필터 */
+.marker-status-filters {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.marker-status-filters h4 {
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.marker-status-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.marker-status-option {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #666;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+  position: relative;
+}
+
+.marker-status-option::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.marker-status-option[data-status="favorited"]::before {
+  background: #FF3B30;
+}
+
+.marker-status-option[data-status="liked"]::before {
+  background: #007AFF;
+}
+
+.marker-status-option[data-status="disliked"]::before {
+  background: #8E8E93;
+}
+
+.marker-status-option[data-status="not-visited"]::before {
+  background: #FF6B6B;
+}
+
+.marker-status-option:hover {
+  border-color: #007AFF;
+  color: #007AFF;
+  background: #f0f8ff;
+}
+
+.marker-status-option.active {
+  background: #007AFF;
+  color: white;
+  border-color: #007AFF;
+}
+
+.marker-status-option.active:hover {
+  background: #0056CC;
+}
+
+/* 미니 팝업 */
+.mini-popup {
+  position: absolute;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  width: 280px;
+  z-index: 2000;
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+  cursor: move;
+  user-select: none;
+}
+
+.mini-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+}
+
+.mini-popup-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  flex: 1;
+}
+
+.close-popup-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-popup-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.mini-popup-content {
+  padding: 1rem;
+}
+
+.mini-popup-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mini-popup-rating .stars {
+  display: flex;
+  gap: 0.1rem;
+}
+
+.mini-popup-rating .star {
+  color: #ddd;
+  font-size: 0.9rem;
+}
+
+.mini-popup-rating .star.filled {
+  color: #FFD700;
+}
+
+.mini-popup-rating .rating-text {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.mini-popup-info {
+  margin-bottom: 1rem;
+}
+
+.mini-popup-info p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.mini-popup-info .category {
+  color: #007AFF;
+  font-weight: 500;
+}
+
+.mini-popup-info .business-status {
+  font-weight: 500;
+}
+
+.mini-popup-info .business-status.open {
+  color: #34C759;
+}
+
+.mini-popup-info .business-status.closed {
+  color: #FF3B30;
+}
+
+.mini-popup-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mini-popup-actions .favorite-btn,
+.mini-popup-actions .detail-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mini-popup-actions .favorite-btn {
+  background: #007AFF;
+  color: white;
+}
+
+.mini-popup-actions .favorite-btn:hover {
+  background: #0056CC;
+}
+
+.mini-popup-actions .favorite-btn.favorited {
+  background: #FF3B30;
+}
+
+.mini-popup-actions .favorite-btn.favorited:hover {
+  background: #D70015;
+}
+
+.mini-popup-actions .detail-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.mini-popup-actions .detail-btn:hover {
+  background: #e9ecef;
+  color: #333;
+} 

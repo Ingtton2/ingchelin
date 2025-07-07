@@ -1,0 +1,386 @@
+.favorites-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.favorites-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.favorites-header h2 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.favorites-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.empty-favorites {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.empty-favorites h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.empty-favorites p {
+  color: #666;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.favorite-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.favorite-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.favorite-card:hover .remove-btn {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 20px 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 1;
+}
+
+.restaurant-info {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.restaurant-name {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.remove-btn {
+  background: white;
+  border: 2px solid #ff6b6b;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  color: #ff6b6b;
+  z-index: 100;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  min-width: 35px;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.favorite-card:hover .remove-btn:hover {
+  background-color: #ff6b6b;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.favorite-card:hover .remove-btn:active {
+  transform: scale(0.95);
+  background-color: #ff5252;
+}
+
+.card-body {
+  padding: 15px 20px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.stars {
+  color: #FFD700;
+  font-size: 16px;
+}
+
+.rating-number {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+  font-size: 14px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address, .price {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  padding: 15px 20px 20px 20px;
+}
+
+.view-map-btn, .rating-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.view-map-btn {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  color: white;
+}
+
+.view-map-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+}
+
+.rating-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: white;
+}
+
+.rating-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+/* 평가 모달 스타일 */
+.rating-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.rating-modal-content {
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.rating-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #eee;
+}
+
+.rating-modal-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.rating-modal-body {
+  padding: 25px;
+}
+
+.restaurant-info-modal {
+  margin-bottom: 25px;
+}
+
+.restaurant-info-modal .description {
+  color: #666;
+  line-height: 1.6;
+  margin: 15px 0;
+}
+
+.restaurant-info-modal .details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.restaurant-info-modal .address,
+.restaurant-info-modal .price {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.rating-section h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  line-height: 1;
+}
+
+.star-btn:hover,
+.star-btn.filled {
+  color: #FFD700;
+}
+
+.star-btn:hover ~ .star-btn {
+  color: #ddd;
+}
+
+.rating-text {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .favorites-container {
+    padding: 10px;
+  }
+  
+  .favorites-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .favorite-card {
+    margin-bottom: 15px;
+  }
+  
+  .card-header {
+    padding: 15px 15px 10px 15px;
+  }
+  
+  .card-body {
+    padding: 10px 15px;
+  }
+  
+  .card-actions {
+    padding: 10px 15px 15px 15px;
+    flex-direction: column;
+  }
+  
+  .view-map-btn, .rating-btn {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+}
+
+/* 평가 모달 반응형 */
+@media (max-width: 768px) {
+  .rating-modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .rating-modal-header {
+    padding: 15px 20px;
+  }
+  
+  .rating-modal-body {
+    padding: 20px;
+  }
+  
+  .star-rating {
+    justify-content: center;
+  }
+  
+  .star-btn {
+    font-size: 25px;
+  }
+} 

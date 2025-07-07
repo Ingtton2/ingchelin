@@ -1,0 +1,189 @@
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  backdrop-filter: blur(5px);
+}
+
+/* 모달 컨텐츠 */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+  cursor: move;
+  user-select: none;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+  cursor: move;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* 모달 바디 */
+.modal-body {
+  padding: 1.5rem;
+}
+
+/* 맛집 정보 상세 */
+.restaurant-info-detail {
+  margin-bottom: 1.5rem;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+
+.info-label {
+  min-width: 80px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.info-value {
+  color: #666;
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* 별점 */
+.star {
+  color: #ddd;
+  font-size: 1rem;
+  margin-right: 0.1rem;
+}
+
+.star.filled {
+  color: #FFD700;
+}
+
+/* 모달 액션 */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.favorite-btn {
+  flex: 1;
+  background: #007AFF;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background: #0056CC;
+  transform: translateY(-1px);
+}
+
+.favorite-btn.favorited {
+  background: #FF3B30;
+}
+
+.favorite-btn.favorited:hover {
+  background: #D70015;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 85vh;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .info-label {
+    min-width: auto;
+    margin-right: 0;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .favorite-btn {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+} 

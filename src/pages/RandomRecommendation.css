@@ -218,6 +218,44 @@
   background: rgba(255, 255, 255, 1);
 }
 
+.filter-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(200, 200, 200, 0.5);
+}
+
+.location-warning,
+.location-error {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #FF6B6B;
+  font-weight: 500;
+}
+
+.location-error {
+  color: #FF4757;
+}
+
+.location-btn {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.75rem;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+}
+
+.location-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+}
+
 /* 로딩 섹션 */
 .loading-section {
   text-align: center;
@@ -399,6 +437,17 @@
   font-size: 0.9rem;
   color: #666;
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.restaurant-info .distance {
+  color: #4ECDC4;
+  font-weight: 600;
+  background: rgba(78, 205, 196, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }

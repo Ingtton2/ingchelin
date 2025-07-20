@@ -91,13 +91,13 @@ const LocationBasedRecommendation = () => {
               };
             });
 
-          // 위도/경도가 없는 경우 임시 위치 데이터 추가
+          // 위도/경도가 없는 경우 기본 위치 데이터 추가
           const restaurantsWithoutLocation = restaurants
             .filter(restaurant => !restaurant.latitude || !restaurant.longitude)
             .map(restaurant => ({
               ...restaurant,
               distance: Math.random() * 10 + 1, // 임시 거리 (1-11km)
-              position: { lat: 37.5665, lng: 126.9780 }, // 서울 시청 좌표
+              position: restaurant.position || { lat: 37.5665, lng: 126.9780 }, // 기존 position 사용 또는 기본값
               businessHours: "11:00 - 22:00",
             }));
 

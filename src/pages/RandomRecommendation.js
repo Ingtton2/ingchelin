@@ -20,8 +20,31 @@ const RandomRecommendation = () => {
     maxDistance: 'all',
     mood: 'all'
   });
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
   const { getRestaurantVisitStatus } = useVisit();
+
+  // 사용자 위치 가져오기
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setLocationError(null);
+        },
+        (error) => {
+          console.error('위치 정보를 가져올 수 없습니다:', error);
+          setLocationError('위치 정보를 가져올 수 없습니다. 거리 필터가 비활성화됩니다.');
+        }
+      );
+    } else {
+      setLocationError('이 브라우저는 위치 정보를 지원하지 않습니다.');
+    }
+  };
 
   // 백엔드에서 레스토랑 데이터 가져오기
   useEffect(() => {
@@ -45,6 +68,7 @@ const RandomRecommendation = () => {
     };
 
     fetchRestaurants();
+    getUserLocation(); // 사용자 위치 가져오기
   }, []);
 
   // 데이터베이스에서 필터 옵션 동적 생성
@@ -126,6 +150,23 @@ const RandomRecommendation = () => {
     if (filters.region !== 'all') {
       filtered = filtered.filter(restaurant => {
         return restaurant.address.includes(filters.region);
+      });
+    }
+
+    // 거리 필터
+    if (filters.maxDistance !== 'all' && userLocation) {
+      const maxDistance = parseFloat(filters.maxDistance);
+      filtered = filtered.filter(restaurant => {
+        if (restaurant.latitude && restaurant.longitude) {
+          const distance = calculateDistance(
+            userLocation.lat,
+            userLocation.lng,
+            restaurant.latitude,
+            restaurant.longitude
+          );
+          return distance <= maxDistance;
+        }
+        return false; // 좌표가 없는 레스토랑은 제외
       });
     }
 
@@ -273,6 +314,15 @@ const RandomRecommendation = () => {
             >
               {showFilters ? '필터 숨기기' : '필터 설정'}
             </button>
+            
+            {!userLocation && (
+              <button 
+                className="location-btn"
+                onClick={getUserLocation}
+              >
+                📍 위치 설정
+              </button>
+            )}
           </div>
         )}
 
@@ -306,6 +356,32 @@ const RandomRecommendation = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="filter-group">
+              <label>최대 거리:</label>
+              <select 
+                value={filters.maxDistance} 
+                onChange={(e) => handleFilterChange('maxDistance', e.target.value)}
+                disabled={!userLocation}
+              >
+                <option value="all">거리 무관</option>
+                <option value="1">1km 이내</option>
+                <option value="2">2km 이내</option>
+                <option value="3">3km 이내</option>
+                <option value="5">5km 이내</option>
+                <option value="10">10km 이내</option>
+              </select>
+              {!userLocation && (
+                <small className="location-warning">
+                  📍 위치 정보가 필요합니다. 브라우저에서 위치 접근을 허용해주세요.
+                </small>
+              )}
+              {locationError && (
+                <small className="location-error">
+                  ⚠️ {locationError}
+                </small>
+              )}
             </div>
 
 
@@ -359,6 +435,16 @@ const RandomRecommendation = () => {
               
               <div className="restaurant-info">
                 <p className="address">📍 {currentRecommendation.address}</p>
+                {userLocation && currentRecommendation.latitude && currentRecommendation.longitude && (
+                  <p className="distance">
+                    📏 거리: {calculateDistance(
+                      userLocation.lat,
+                      userLocation.lng,
+                      currentRecommendation.latitude,
+                      currentRecommendation.longitude
+                    ).toFixed(1)}km
+                  </p>
+                )}
                 <p className="price">💰 {currentRecommendation.price}</p>
                 <p className="hours">🕒 {currentRecommendation.hours}</p>
                 <p className="phone">📞 {currentRecommendation.phone}</p>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../context/FavoriteContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,53 +8,119 @@ function Favorites() {
   const { favorites, removeFromFavorites } = useFavorites();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  
+  console.log('Favorites 컴포넌트 렌더링:', { 
+    favoritesCount: favorites.length, 
+    currentUser: currentUser?.id,
+    currentUserEmail: currentUser?.email,
+    favorites: favorites.map(f => ({ id: f.id, name: f.name, cuisine: f.cuisine }))
+  });
   const [userRatings, setUserRatings] = useState({});
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
+  // 사용자 평점 불러오기
+  const loadUserRatings = async () => {
+    if (!currentUser) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8081/api/reviews/user/${currentUser.id}`);
+      if (response.ok) {
+        const reviews = await response.json();
+        const ratingsMap = {};
+        reviews.forEach(review => {
+          ratingsMap[review.restaurant.id] = {
+            ...ratingsMap[review.restaurant.id],
+            [currentUser.id]: review.rating
+          };
+        });
+        setUserRatings(ratingsMap);
+      }
+    } catch (error) {
+      console.error('평점 불러오기 실패:', error);
+    }
+  };
+
+  // 사용자 로그인 시 평점 불러오기
+  useEffect(() => {
+    if (currentUser) {
+      loadUserRatings();
+    } else {
+      setUserRatings({});
+    }
+  }, [currentUser]);
+
   const getCategoryIcon = (category) => {
+    if (!category) return '🍽️';
     const icons = {
       '한식': '🍚',
       '양식': '🍝',
       '일식': '🍣',
       '중식': '🥢',
       '동남아식': '🍜',
-      '카페': '☕'
+      '카페': '☕',
+      '기타': '🍽️'
     };
     return icons[category] || '🍽️';
   };
 
   const getCategoryColor = (category) => {
+    if (!category) return '#667eea';
     const colors = {
       '한식': '#FF6B6B',
       '양식': '#4ECDC4',
       '일식': '#45B7D1',
       '중식': '#96CEB4',
       '동남아식': '#FFEAA7',
-      '카페': '#DDA0DD'
+      '카페': '#DDA0DD',
+      '기타': '#667eea'
     };
     return colors[category] || '#667eea';
   };
 
   // 사용자 평점 처리
-  const handleRating = (restaurantId, rating) => {
+  const handleRating = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
       return;
     }
 
-    const newUserRatings = {
-      ...userRatings,
-      [restaurantId]: {
-        ...userRatings[restaurantId],
-        [currentUser.id]: rating
-      }
-    };
+    try {
+      // 백엔드 API로 평점 저장
+      const response = await fetch('http://localhost:8081/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          restaurantId: restaurantId,
+          rating: rating,
+          comment: `${rating}점 평가`
+        })
+      });
 
-    setUserRatings(newUserRatings);
-    localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
-    setShowRatingModal(false);
-    setSelectedRestaurant(null);
+      if (response.ok) {
+        const newUserRatings = {
+          ...userRatings,
+          [restaurantId]: {
+            ...userRatings[restaurantId],
+            [currentUser.id]: rating
+          }
+        };
+
+        setUserRatings(newUserRatings);
+        localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
+        setShowRatingModal(false);
+        setSelectedRestaurant(null);
+        alert('평점이 저장되었습니다! ⭐');
+      } else {
+        alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('평점 저장 중 오류:', error);
+      alert('평점 저장 중 오류가 발생했습니다.');
+    }
   };
 
   // 사용자 평점 가져오기
@@ -115,7 +181,12 @@ function Favorites() {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                removeFromFavorites(restaurant.id);
+                console.log('X 버튼 클릭됨:', restaurant.id, restaurant.name);
+                
+                // 사용자 확인
+                if (window.confirm(`${restaurant.name}을 찜 목록에서 제거하시겠습니까?`)) {
+                  removeFromFavorites(restaurant.id);
+                }
               }}
               onMouseDown={(e) => e.stopPropagation()}
               title="찜 목록에서 제거"
@@ -123,14 +194,14 @@ function Favorites() {
             >
               ❌
             </button>
-            <div className="card-header">
-              <div className="restaurant-info">
-                <h3 className="restaurant-name">{restaurant.name}</h3>
-                <div className="category-badge" style={{ backgroundColor: getCategoryColor(restaurant.category) }}>
-                  {getCategoryIcon(restaurant.category)} {restaurant.category}
+                          <div className="card-header">
+                <div className="restaurant-info">
+                  <h3 className="restaurant-name">{restaurant.name}</h3>
+                  <div className="category-badge" style={{ backgroundColor: getCategoryColor(restaurant.cuisine || restaurant.category) }}>
+                    {getCategoryIcon(restaurant.cuisine || restaurant.category)} {restaurant.cuisine || restaurant.category || '기타'}
+                  </div>
                 </div>
               </div>
-            </div>
 
             <div className="card-body">
               <div className="rating">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoriteContext';
-import { restaurantData } from '../data/restaurantData';
+import { restaurantAPI } from '../services/api';
 import './RestaurantList.css';
 
 function RestaurantList() {
@@ -10,62 +10,122 @@ function RestaurantList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [userRatings, setUserRatings] = useState({});
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { currentUser } = useAuth();
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
 
-  const categories = ['all', '한식', '양식', '일식', '중식', '동남아식', '카페'];
+  const categories = ['all', '한식', '양식', '일식', '중식', '베트남', '인도', '태국', '멕시칸', '프랑스'];
+
+  // 사용자 평점 불러오기
+  const loadUserRatings = async () => {
+    if (!currentUser) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8081/api/reviews/user/${currentUser.id}`);
+      if (response.ok) {
+        const reviews = await response.json();
+        const ratingsMap = {};
+        reviews.forEach(review => {
+          ratingsMap[review.restaurant.id] = {
+            ...ratingsMap[review.restaurant.id],
+            [currentUser.id]: review.rating
+          };
+        });
+        setUserRatings(ratingsMap);
+      }
+    } catch (error) {
+      console.error('평점 불러오기 실패:', error);
+    }
+  };
+
+  // 사용자 로그인 시 평점 불러오기
+  useEffect(() => {
+    if (currentUser) {
+      loadUserRatings();
+    } else {
+      setUserRatings({});
+    }
+  }, [currentUser]);
 
   useEffect(() => {
-    // restaurantData에서 데이터를 가져와서 필요한 필드 추가
-    const initialRestaurants = restaurantData.map(restaurant => ({
-      ...restaurant,
-      location: restaurant.position, // position을 location으로 매핑
-      totalRatings: Math.floor(Math.random() * 200) + 50, // 랜덤 리뷰 수
-      userRatings: {}
-    }));
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8081/api/restaurants');
+        if (!response.ok) {
+          throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
+        }
+        const data = await response.json();
+        const restaurantsWithExtraData = data.map(restaurant => ({
+          ...restaurant,
+          category: restaurant.cuisine, // cuisine을 category로 매핑
+          location: { lat: restaurant.latitude, lng: restaurant.longitude }, // position을 location으로 매핑
+          totalRatings: Math.floor(Math.random() * 200) + 50, // 랜덤 리뷰 수
+          price: "2만원~5만원", // 임시 데이터
+          hours: "11:00 - 22:00", // 임시 데이터
+          parking: "주차 가능", // 임시 데이터
+          userRatings: {}
+        }));
 
-    // 로컬 스토리지에서 사용자 평점 불러오기
-    const savedRatings = localStorage.getItem('userRatings');
-    if (savedRatings) {
-      setUserRatings(JSON.parse(savedRatings));
-    }
+        // 로컬 스토리지에서 사용자 평점 불러오기
+        const savedRatings = localStorage.getItem('userRatings');
+        if (savedRatings) {
+          setUserRatings(JSON.parse(savedRatings));
+        }
 
-    setRestaurants(initialRestaurants);
+        setRestaurants(restaurantsWithExtraData);
+      } catch (err) {
+        console.error('Failed to fetch restaurants:', err);
+        setError('레스토랑 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
   }, []);
 
-  const handleRating = (restaurantId, rating) => {
+  const handleRating = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
       return;
     }
 
-    const newUserRatings = {
-      ...userRatings,
-      [restaurantId]: {
-        ...userRatings[restaurantId],
-        [currentUser.id]: rating
-      }
-    };
+    try {
+      // 백엔드 API로 평점 저장
+      const response = await fetch('http://localhost:8081/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          restaurantId: restaurantId,
+          rating: rating,
+          comment: `${rating}점 평가`
+        })
+      });
 
-    setUserRatings(newUserRatings);
-    localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
-
-    // 맛집의 평균 평점 업데이트
-    setRestaurants(prev => prev.map(restaurant => {
-      if (restaurant.id === restaurantId) {
-        const allRatings = Object.values(newUserRatings[restaurantId] || {});
-        const averageRating = allRatings.length > 0 
-          ? allRatings.reduce((sum, r) => sum + r, 0) / allRatings.length 
-          : restaurant.rating;
-        
-        return {
-          ...restaurant,
-          rating: Math.round(averageRating * 10) / 10,
-          totalRatings: allRatings.length
+      if (response.ok) {
+        const newUserRatings = {
+          ...userRatings,
+          [restaurantId]: {
+            ...userRatings[restaurantId],
+            [currentUser.id]: rating
+          }
         };
+
+        setUserRatings(newUserRatings);
+        localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
+        alert('평점이 저장되었습니다! ⭐');
+      } else {
+        alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
       }
-      return restaurant;
-    }));
+    } catch (error) {
+      console.error('평점 저장 중 오류:', error);
+      alert('평점 저장 중 오류가 발생했습니다.');
+    }
   };
 
   // 검색어와 카테고리로 필터링
@@ -139,8 +199,13 @@ function RestaurantList() {
         </div>
       </div>
 
-      <div className="restaurant-grid">
-        {filteredRestaurants.map(restaurant => (
+      {loading ? (
+        <div className="loading">로딩 중...</div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : (
+        <div className="restaurant-grid">
+          {filteredRestaurants.map(restaurant => (
           <div key={restaurant.id} className="restaurant-card">
             <div className="restaurant-info">
               <div className="restaurant-header">
@@ -178,10 +243,8 @@ function RestaurantList() {
                   onClick={() => {
                     if (isInFavorites(restaurant.id)) {
                       removeFromFavorites(restaurant.id);
-                      alert('찜 목록에서 제거되었습니다! 👋');
                     } else {
                       addToFavorites(restaurant);
-                      alert('찜 목록에 추가되었습니다! 🎉');
                     }
                   }}
                 >
@@ -199,6 +262,7 @@ function RestaurantList() {
           </div>
         ))}
       </div>
+      )}
 
       {/* 상세 정보 모달 */}
       {selectedRestaurant && (

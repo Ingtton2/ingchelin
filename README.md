@@ -1,16 +1,16 @@
-# 🍽️ 레스토랑 추천 시스템
+# 인슐랭 맛집 가이드 🍽️
 
-사용자 맞춤형 레스토랑 추천과 위치 기반 서비스를 제공하는 React 웹 애플리케이션입니다.
+React 프론트엔드와 Spring Boot 백엔드로 구성된 맛집 추천 웹 애플리케이션입니다.
 
-## ✨ 주요 기능
+## 🚀 기술 스택
 
-- **🔐 사용자 인증**: 회원가입/로그인 시스템
-- **🎲 랜덤 추천**: 필터링 옵션과 함께 랜덤 레스토랑 추천
-- **📍 위치 기반 추천**: 사용자 위치 기반 레스토랑 추천
-- **🗺️ 지도 서비스**: Google Maps를 통한 레스토랑 위치 표시
-- **❤️ 즐겨찾기**: 마음에 드는 레스토랑 저장 및 관리
-- **📋 레스토랑 목록**: 카테고리별 필터링 및 상세 정보
+### Frontend
+- **React 19.1.0** - 사용자 인터페이스
+- **React Router DOM** - 라우팅
+- **Axios** - HTTP 클라이언트
+- **Google Maps API** - 지도 서비스
 
+<<<<<<< Updated upstream
 ## 🚀 시작하기
 
 ### 필수 요구사항
@@ -66,79 +66,171 @@ http://localhost:3000
 - **HTTP Client**: Axios
 - **Styling**: CSS3 with Flexbox/Grid
 - **State Management**: React Context API
+=======
+### Backend
+- **Spring Boot 3.2.0** - REST API 서버
+- **Spring Data JPA** - 데이터 접근 계층
+- **H2 Database** - 인메모리 데이터베이스
+- **Maven** - 빌드 도구
+>>>>>>> Stashed changes
 
 ## 📁 프로젝트 구조
 
 ```
-restaurant_web/
-├── public/
-│   ├── index.html
-│   ├── favicon.ico
-│   └── manifest.json
-├── src/
-│   ├── components/          # 재사용 가능한 컴포넌트
-│   │   ├── Navigation.js
-│   │   ├── Navigation.css
-│   │   ├── LocationBasedRecommendation.js
-│   │   ├── RestaurantDetailModal.js
-│   │   └── RestaurantDetailModal.css
-│   ├── context/            # React Context (상태 관리)
-│   │   ├── AuthContext.js
-│   │   ├── FavoriteContext.js
-│   │   └── VisitContext.js
-│   ├── data/               # 정적 데이터
-│   │   └── restaurantData.js
-│   ├── pages/              # 페이지 컴포넌트
-│   │   ├── Home.js
-│   │   ├── Home.css
-│   │   ├── Login.js
-│   │   ├── Signup.js
-│   │   ├── RestaurantList.js
-│   │   ├── RestaurantList.css
-│   │   ├── Map.js
-│   │   ├── Map.css
-│   │   ├── RandomRecommendation.js
-│   │   ├── RandomRecommendation.css
-│   │   ├── Favorites.js
-│   │   └── Favorites.css
-│   ├── App.js
-│   ├── App.css
-│   └── index.js
-├── package.json
-└── README.md
+ingchelin/
+├── src/                    # React 프론트엔드
+│   ├── components/         # React 컴포넌트
+│   ├── pages/             # 페이지 컴포넌트
+│   ├── context/           # React Context
+│   ├── services/          # API 서비스
+│   └── data/              # 정적 데이터
+├── backend/               # Spring Boot 백엔드
+│   ├── src/main/java/     # Java 소스 코드
+│   ├── src/main/resources/ # 설정 파일
+│   └── pom.xml           # Maven 설정
+└── public/               # 정적 파일
 ```
 
-## 🔐 인증 시스템
+## 🛠️ 설치 및 실행
 
-- **ProtectedRoute**: 인증이 필요한 페이지 보호
-- **Context API**: 사용자 상태 관리
-- **자동 리다이렉트**: 로그인하지 않은 사용자 자동 이동
+### 1. 프론트엔드 실행
 
-## 🎨 UI/UX 특징
+```bash
+# 의존성 설치
+npm install
 
-- **반응형 디자인**: 모바일과 데스크톱 최적화
-- **모던 UI**: 그라데이션, 애니메이션, 블러 효과
-- **사용자 친화적**: 직관적인 네비게이션과 인터페이스
-- **접근성**: 키보드 네비게이션 지원
-
-## 📊 데이터 구조
-
-### 레스토랑 정보
-```javascript
-{
-  id: number,
-  name: string,
-  category: string,
-  rating: number,
-  address: string,
-  description: string,
-  price: string,
-  position: { lat: number, lng: number },
-  hours: string,
-  phone: string,
-  parking: string
-}
+# 개발 서버 실행
+npm start
 ```
+
+프론트엔드는 `http://localhost:3000`에서 실행됩니다.
+
+### 2. 백엔드 실행
+
+#### PostgreSQL 설정 (필수)
+
+**Docker 사용 (권장):**
+```bash
+cd backend
+docker-compose up -d postgres
+```
+
+**로컬 PostgreSQL 설치:**
+```bash
+# Homebrew로 PostgreSQL 설치
+brew install postgresql@14
+
+# PostgreSQL 서비스 시작
+brew services start postgresql@14
+
+# 데이터베이스 생성
+createdb restaurantdb
+```
+
+#### Spring Boot 실행
+
+```bash
+# 백엔드 디렉토리로 이동
+cd backend
+
+# 자동 설정 스크립트 실행 (Maven, PostgreSQL 설정)
+./setup.sh
+
+# 또는 수동으로 실행
+./mvnw spring-boot:run
+```
+
+백엔드는 `http://localhost:8080`에서 실행됩니다.
+
+## 📚 API 엔드포인트
+
+### 레스토랑 API
+
+- `GET /api/restaurants` - 모든 레스토랑 조회
+- `GET /api/restaurants/{id}` - ID로 레스토랑 조회
+- `POST /api/restaurants` - 새 레스토랑 추가
+- `PUT /api/restaurants/{id}` - 레스토랑 정보 수정
+- `DELETE /api/restaurants/{id}` - 레스토랑 삭제
+- `GET /api/restaurants/cuisine/{cuisine}` - 요리 타입으로 검색
+- `GET /api/restaurants/rating/{rating}` - 평점으로 검색
+- `GET /api/restaurants/search?keyword={keyword}` - 키워드로 검색
+- `GET /api/restaurants/nearby?lat={lat}&lng={lng}&radius={radius}` - 근처 레스토랑 검색
+- `GET /api/restaurants/random` - 랜덤 레스토랑 추천
+
+## 🗄️ 데이터베이스
+
+PostgreSQL 데이터베이스를 사용하며, 애플리케이션 시작 시 샘플 레스토랑 데이터가 자동으로 로드됩니다.
+
+### PostgreSQL 설정
+
+#### Docker 사용 (권장)
+```bash
+cd backend
+docker-compose up -d postgres
+```
+
+#### 로컬 설치
+```bash
+# Homebrew로 PostgreSQL 설치
+brew install postgresql@14
+
+# PostgreSQL 서비스 시작
+brew services start postgresql@14
+
+# 데이터베이스 생성
+createdb restaurantdb
+```
+
+### 데이터베이스 정보
+- **URL**: `jdbc:postgresql://localhost:5432/restaurantdb`
+- **Username**: `postgres`
+- **Password**: `password`
+- **Port**: `5432`
+
+### pgAdmin (선택사항)
+Docker Compose를 사용하면 pgAdmin도 함께 실행됩니다:
+- **URL**: `http://localhost:8081`
+- **Email**: `admin@restaurant.com`
+- **Password**: `admin`
+
+## ✨ 주요 기능
+
+### 🏠 홈페이지
+- 사용자 환영 메시지
+- 위치 기반 추천
+- TOP 3 맛집 소개
+- 회원가입/로그인 링크
+
+### 📋 맛집 목록
+- 카테고리별 필터링
+- 검색 기능
+- 평점 시스템
+- 찜하기 기능
+- 상세 정보 모달
+
+### 🗺️ 지도 서비스
+- Google Maps 연동
+- 레스토랑 위치 표시
+- 클릭 시 상세 정보
+
+### 🎲 랜덤 추천
+- 필터 설정
+- 랜덤 맛집 추천
+- 찜하기/길찾기 기능
+
+### ❤️ 찜 목록
+- 찜한 맛집 관리
+- 찜 해제 기능
+
+## 🔧 개발 환경 설정
+
+### 필수 요구사항
+- Node.js 18+
+- Java 17+
+- Maven 3.6+
+
+### 환경 변수
+프론트엔드에서 백엔드 API URL을 변경하려면 `src/services/api.js` 파일을 수정하세요.
 
 ## 🤝 기여하기
 
@@ -154,18 +246,4 @@ restaurant_web/
 
 ## 📞 문의
 
-프로젝트에 대한 문의사항이 있으시면 [이슈](https://github.com/Ingtton2/restaurant_web/issues)를 생성해주세요.
-
-## 🚀 배포
-
-### Netlify 배포
-```bash
-npm run build
-```
-
-빌드된 파일을 Netlify에 업로드하여 배포할 수 있습니다.
-
----
-
-**개발자**: Ingtton2  
-**GitHub**: [https://github.com/Ingtton2/restaurant_web](https://github.com/Ingtton2/restaurant_web)
+프로젝트에 대한 문의사항이 있으시면 이슈를 생성해 주세요.

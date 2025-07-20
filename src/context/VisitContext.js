@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const VisitContext = createContext();
 
@@ -12,26 +13,74 @@ export const useVisit = () => {
 
 export const VisitProvider = ({ children }) => {
   const [visitStatus, setVisitStatus] = useState({});
+  const [loading, setLoading] = useState(false);
+  const { currentUser: user } = useAuth();
 
-  // localStorage에서 방문 상태 로드
-  useEffect(() => {
-    const savedVisitStatus = localStorage.getItem('visitStatus');
-    if (savedVisitStatus) {
-      setVisitStatus(JSON.parse(savedVisitStatus));
+  // 사용자 방문 기록 불러오기
+  const loadVisitStatus = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:8081/api/visits/user/${user.id}`);
+      if (response.ok) {
+        const visits = await response.json();
+        const statusMap = {};
+        visits.forEach(visit => {
+          statusMap[visit.restaurant.id] = visit.rating >= 4 ? 'liked' : 'disliked';
+        });
+        setVisitStatus(statusMap);
+      }
+    } catch (error) {
+      console.error('방문 기록 불러오기 실패:', error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
 
-  // 방문 상태 변경시 localStorage에 저장
+  // 사용자 로그인 시 방문 기록 불러오기
   useEffect(() => {
-    localStorage.setItem('visitStatus', JSON.stringify(visitStatus));
-  }, [visitStatus]);
+    if (user) {
+      loadVisitStatus();
+    } else {
+      setVisitStatus({});
+    }
+  }, [user]);
 
-  // 방문 상태 설정
-  const setRestaurantVisitStatus = (restaurantId, status) => {
-    setVisitStatus(prev => ({
-      ...prev,
-      [restaurantId]: status
-    }));
+  // 방문 상태 설정 (백엔드에 저장)
+  const setRestaurantVisitStatus = async (restaurantId, status) => {
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const rating = status === 'liked' ? 5 : 2; // 좋아함: 5점, 싫어함: 2점
+      
+      const response = await fetch('http://localhost:8081/api/visits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          restaurantId: restaurantId,
+          rating: rating,
+          review: status === 'liked' ? '좋아요!' : '별로예요.'
+        })
+      });
+
+      if (response.ok) {
+        setVisitStatus(prev => ({
+          ...prev,
+          [restaurantId]: status
+        }));
+      } else {
+        console.error('방문 기록 저장 실패');
+      }
+    } catch (error) {
+      console.error('방문 기록 저장 중 오류:', error);
+    }
   };
 
   // 방문 상태 가져오기
@@ -63,7 +112,8 @@ export const VisitProvider = ({ children }) => {
     visitStatus,
     setRestaurantVisitStatus,
     getRestaurantVisitStatus,
-    getVisitStats
+    getVisitStats,
+    loading
   };
 
   return (

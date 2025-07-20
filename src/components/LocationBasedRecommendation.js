@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { restaurantData } from '../data/restaurantData';
 import { useVisit } from '../context/VisitContext';
 import { useFavorites } from '../context/FavoriteContext';
 
@@ -27,8 +26,23 @@ const LocationBasedRecommendation = () => {
     return distance;
   };
 
+  // 백엔드에서 레스토랑 데이터 가져오기
+  const fetchRestaurants = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/api/restaurants');
+      if (!response.ok) {
+        throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Failed to fetch restaurants:', error);
+      throw error;
+    }
+  };
+
   // 사용자 위치 가져오기
-  const getUserLocation = () => {
+  const getUserLocation = async () => {
     setLoading(true);
     setError(null);
 
@@ -39,31 +53,44 @@ const LocationBasedRecommendation = () => {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-        
-        // 가까운 식당 찾기
-        const restaurantsWithDistance = restaurantData.map(restaurant => {
-          const distance = calculateDistance(
-            latitude, 
-            longitude, 
-            restaurant.position.lat, 
-            restaurant.position.lng
-          );
-          return {
-            ...restaurant,
-            distance: distance
-          };
-        });
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+          
+          // 백엔드에서 레스토랑 데이터 가져오기
+          const restaurants = await fetchRestaurants();
+          
+          // 가까운 식당 찾기
+          const restaurantsWithDistance = restaurants.map(restaurant => {
+            const distance = calculateDistance(
+              latitude, 
+              longitude, 
+              restaurant.latitude, 
+              restaurant.longitude
+            );
+            return {
+              ...restaurant,
+              distance: distance,
+              position: { lat: restaurant.latitude, lng: restaurant.longitude },
+              totalRatings: Math.floor(Math.random() * 200) + 50, // 임시 데이터
+              price: "2만원~5만원", // 임시 데이터
+              businessHours: "11:00 - 22:00", // 임시 데이터
+              parking: "주차 가능" // 임시 데이터
+            };
+          });
 
-        // 거리순으로 정렬 (가까운 순) - 3개만 추천
-        const sortedRestaurants = restaurantsWithDistance
-          .sort((a, b) => a.distance - b.distance)
-          .slice(0, 3); // 상위 3개만 추천
+          // 거리순으로 정렬 (가까운 순) - 3개만 추천
+          const sortedRestaurants = restaurantsWithDistance
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 3); // 상위 3개만 추천
 
-        setNearbyRestaurants(sortedRestaurants);
-        setLoading(false);
+          setNearbyRestaurants(sortedRestaurants);
+          setLoading(false);
+        } catch (error) {
+          setError('레스토랑 정보를 불러오는데 실패했습니다.');
+          setLoading(false);
+        }
       },
       (error) => {
         let errorMessage = '위치 정보를 가져올 수 없습니다.';
@@ -250,7 +277,7 @@ const LocationBasedRecommendation = () => {
                 <div className="restaurant-details">
                   <p><strong>📍 주소:</strong> {selectedRestaurant.address}</p>
                   <p><strong>💰 가격대:</strong> {selectedRestaurant.price}</p>
-                  <p><strong>🕒 영업시간:</strong> {selectedRestaurant.hours}</p>
+                  <p><strong>🕒 영업시간:</strong> {selectedRestaurant.businessHours}</p>
                   <p><strong>📞 전화번호:</strong> {selectedRestaurant.phone}</p>
                   <p><strong>🚗 주차:</strong> {selectedRestaurant.parking}</p>
                 </div>

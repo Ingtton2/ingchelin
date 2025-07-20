@@ -23,37 +23,51 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const signup = (email, password, username) => {
-    // 실제로는 서버에 회원가입 요청을 보내야 합니다
-    const newUser = {
-      id: Date.now(),
-      email,
-      username,
-      createdAt: new Date().toISOString()
-    };
-    
-    localStorage.setItem('user', JSON.stringify(newUser));
-    setCurrentUser(newUser);
-    return Promise.resolve(newUser);
+  const signup = async (email, password, username) => {
+    try {
+      const response = await fetch('http://localhost:8081/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, username }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '회원가입에 실패했습니다.');
+      }
+
+      const user = await response.json();
+      localStorage.setItem('user', JSON.stringify(user));
+      setCurrentUser(user);
+      return user;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const login = (email, password) => {
-    // 실제로는 서버에 로그인 요청을 보내야 합니다
-    // 여기서는 간단한 시뮬레이션을 위해 하드코딩된 사용자 정보를 사용합니다
-    const mockUsers = [
-      { id: 1, email: 'test@test.com', password: '123456', username: '테스트사용자' },
-      { id: 2, email: 'user@user.com', password: '123456', username: '일반사용자' }
-    ];
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:8081/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const user = mockUsers.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-      const { password, ...userWithoutPassword } = user;
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      setCurrentUser(userWithoutPassword);
-      return Promise.resolve(userWithoutPassword);
-    } else {
-      return Promise.reject(new Error('이메일 또는 비밀번호가 잘못되었습니다.'));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '로그인에 실패했습니다.');
+      }
+
+      const user = await response.json();
+      localStorage.setItem('user', JSON.stringify(user));
+      setCurrentUser(user);
+      return user;
+    } catch (error) {
+      throw error;
     }
   };
 

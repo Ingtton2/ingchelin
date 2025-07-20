@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../context/FavoriteContext';
 import { useVisit } from '../context/VisitContext';
-import { restaurantData } from '../data/restaurantData';
+import { restaurantAPI } from '../services/api';
 import './RandomRecommendation.css';
 
 const RandomRecommendation = () => {
   const [currentRecommendation, setCurrentRecommendation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [restaurants, setRestaurants] = useState([]);
   const [filters, setFilters] = useState({
     category: 'all',
     region: 'all',
@@ -18,7 +19,29 @@ const RandomRecommendation = () => {
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
   const { getRestaurantVisitStatus } = useVisit();
 
-  const categories = ['all', '한식', '양식', '일식', '중식', '동남아식', '카페'];
+  const categories = ['all', '한식', '양식', '일식', '중식', '베트남', '인도', '태국', '멕시칸', '프랑스'];
+
+  // 백엔드에서 레스토랑 데이터 가져오기
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        const response = await restaurantAPI.getAll();
+        const restaurantsWithExtraData = response.data.map(restaurant => ({
+          ...restaurant,
+          category: restaurant.cuisine, // cuisine을 category로 매핑
+          price: "2만원~5만원", // 임시 데이터
+          parking: "주차 가능", // 임시 데이터
+          position: { lat: restaurant.latitude, lng: restaurant.longitude }
+        }));
+        setRestaurants(restaurantsWithExtraData);
+      } catch (err) {
+        console.error('Failed to fetch restaurants:', err);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
+
   const regionOptions = [
     { value: 'all', label: '전체 지역' },
     { value: 'seoul', label: '서울시' },
@@ -64,7 +87,7 @@ const RandomRecommendation = () => {
 
   // 필터링된 레스토랑 목록 생성
   const getFilteredRestaurants = () => {
-    let filtered = restaurantData;
+    let filtered = restaurants;
 
     // 카테고리 필터
     if (filters.category !== 'all') {
@@ -114,25 +137,30 @@ const RandomRecommendation = () => {
   };
 
   // 랜덤 추천 생성
-  const generateRandomRecommendation = () => {
+  const generateRandomRecommendation = async () => {
     setIsLoading(true);
     
-    // 로딩 애니메이션을 위한 지연
-    setTimeout(() => {
-      const filteredRestaurants = getFilteredRestaurants();
+    try {
+      // 백엔드에서 랜덤 레스토랑 가져오기
+      const response = await restaurantAPI.getRandom();
+      const randomRestaurant = response.data;
       
-      if (filteredRestaurants.length === 0) {
-        alert('조건에 맞는 맛집이 없습니다. 필터를 조정해보세요!');
-        setIsLoading(false);
-        return;
-      }
-
-      const randomIndex = Math.floor(Math.random() * filteredRestaurants.length);
-      const selectedRestaurant = filteredRestaurants[randomIndex];
+      // 추가 데이터 매핑
+      const restaurantWithExtraData = {
+        ...randomRestaurant,
+        category: randomRestaurant.cuisine,
+        price: "2만원~5만원",
+        parking: "주차 가능",
+        position: { lat: randomRestaurant.latitude, lng: randomRestaurant.longitude }
+      };
       
-      setCurrentRecommendation(selectedRestaurant);
+      setCurrentRecommendation(restaurantWithExtraData);
+    } catch (err) {
+      console.error('Failed to get random restaurant:', err);
+      alert('랜덤 추천을 가져오는데 실패했습니다.');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   // 필터 변경 핸들러

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoriteContext';
 import LocationBasedRecommendation from '../components/LocationBasedRecommendation';
+import { restaurantAPI } from '../services/api';
 import './Home.css';
 
 function Home() {
@@ -10,6 +11,43 @@ function Home() {
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [topRestaurants, setTopRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // 백엔드에서 레스토랑 데이터 가져오기
+  useEffect(() => {
+    const fetchTopRestaurants = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8081/api/restaurants');
+        if (!response.ok) {
+          throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
+        }
+        const data = await response.json();
+        // 평점이 높은 순으로 정렬하여 상위 3개 선택
+        const sortedRestaurants = data
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 3)
+          .map(restaurant => ({
+            ...restaurant,
+            totalRatings: Math.floor(Math.random() * 200) + 50, // 임시 데이터
+            price: "2만원~5만원", // 임시 데이터
+            businessHours: "11:00 - 22:00", // 임시 데이터
+            parking: "주차 가능", // 임시 데이터
+            position: { lat: restaurant.latitude, lng: restaurant.longitude }
+          }));
+        setTopRestaurants(sortedRestaurants);
+      } catch (err) {
+        console.error('Failed to fetch restaurants:', err);
+        setError('레스토랑 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopRestaurants();
+  }, []);
 
   const features = [
     {
@@ -34,50 +72,7 @@ function Home() {
     }
   ];
 
-  const topRestaurants = [
-    {
-      id: 1,
-      name: "스테이크 하우스",
-      category: "양식",
-      rating: 4.9,
-      totalRatings: 128,
-      description: "최고급 스테이크와 와인을 즐길 수 있는 고급 레스토랑입니다.",
-      price: "8만원~15만원",
-      address: "서울시 강남구 압구정로 678",
-      businessHours: "11:00 - 22:00",
-      phone: "02-1234-5678",
-      parking: "주차 가능",
-      position: { lat: 37.5270, lng: 127.0276 }
-    },
-    {
-      id: 2,
-      name: "스시 마스터",
-      category: "일식",
-      rating: 4.9,
-      totalRatings: 95,
-      description: "신선한 재료로 만드는 정통 스시와 사시미를 즐길 수 있습니다.",
-      price: "4만원~8만원",
-      address: "서울시 마포구 홍대로 789",
-      businessHours: "11:30 - 21:30",
-      phone: "02-2345-6789",
-      parking: "주차 불가",
-      position: { lat: 37.5519, lng: 126.9251 }
-    },
-    {
-      id: 3,
-      name: "프랑스 브라서리",
-      category: "양식",
-      rating: 4.8,
-      totalRatings: 156,
-      description: "정통 프랑스 요리와 와인을 즐길 수 있는 고급 레스토랑입니다.",
-      price: "5만원~10만원",
-      address: "서울시 강남구 청담대로 789",
-      businessHours: "12:00 - 23:00",
-      phone: "02-3456-7890",
-      parking: "주차 가능",
-      position: { lat: 37.5270, lng: 127.0276 }
-    }
-  ];
+
 
   const renderStars = (rating) => {
     const stars = [];
@@ -95,10 +90,8 @@ function Home() {
   const handleFavorite = (restaurant) => {
     if (isInFavorites(restaurant.id)) {
       removeFromFavorites(restaurant.id);
-      alert('찜 목록에서 제거되었습니다! 👋');
     } else {
       addToFavorites(restaurant);
-      alert('찜 목록에 추가되었습니다! 🎉');
     }
   };
 
@@ -147,8 +140,13 @@ function Home() {
       {/* TOP 3 맛집 섹션 */}
       <section className="recommendations-section">
         <h2>주인장 추천 식당 TOP 3</h2>
-        <div className="recommendations-grid">
-          {topRestaurants.map((restaurant, index) => (
+        {loading ? (
+          <div className="loading">로딩 중...</div>
+        ) : error ? (
+          <div className="error">{error}</div>
+        ) : (
+          <div className="recommendations-grid">
+            {topRestaurants.map((restaurant, index) => (
             <div key={restaurant.id} className="recommendation-card">
               <div className="recommendation-header">
                 <h3>{restaurant.name}</h3>
@@ -190,6 +188,7 @@ function Home() {
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* 상세보기 모달 */}

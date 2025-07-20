@@ -975,6 +975,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
   position: relative;
+  height: 600px;
+  min-height: 500px;
 }
 
 #map {
@@ -1304,6 +1306,60 @@
 
 .marker-status-option.active:hover {
   background: #0056CC;
+}
+
+/* 좌표 업데이트 섹션 */
+.coordinate-update-section {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.coordinate-update-section h4 {
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.coordinate-update-btn {
+  width: 100%;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.875rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.coordinate-update-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.coordinate-update-btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #6c757d;
+}
+
+.coordinate-update-btn.loading:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.coordinate-update-info {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
 }
 
 /* 미니 팝업 */

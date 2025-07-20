@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../context/FavoriteContext';
 import { useVisit } from '../context/VisitContext';
 import { useSearchParams } from 'react-router-dom';
-import { restaurantData } from '../data/restaurantData';
 import RestaurantDetailModal from '../components/RestaurantDetailModal';
 import './Map.css';
 
@@ -21,7 +20,7 @@ function KakaoMap() {
   
   // 새로운 상태들
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState(['한식', '양식', '일식', '중식', '동남아식', '카페']);
+  const [selectedCategories, setSelectedCategories] = useState(['한식', '중식', '일식', '양식', '분식', '태국', '술', '카페', '디저트']);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   
   // 마커 상태 추가
@@ -39,6 +38,8 @@ function KakaoMap() {
   
   // 상세정보 모달 상태 추가
   const [detailModal, setDetailModal] = useState(null);
+
+
 
   // 드래그 이벤트 핸들러
   const handleMouseDown = (e) => {
@@ -63,7 +64,7 @@ function KakaoMap() {
   };
 
   // 카테고리 옵션
-  const categories = ['한식', '양식', '일식', '중식', '동남아식', '카페'];
+  const categories = ['한식', '중식', '일식', '양식', '분식', '태국', '술', '카페', '디저트'];
   
   // 마커 상태 옵션
   const markerStatusOptions = [
@@ -73,9 +74,109 @@ function KakaoMap() {
     { value: 'not-visited', label: '안 가본 곳', color: '#FF6B6B', icon: '❓' }
   ];
 
+  // 실제 데이터베이스에서 레스토랑 데이터 가져오기
+  const fetchRestaurants = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/restaurants');
+      if (response.ok) {
+        const data = await response.json();
+        // 데이터베이스 데이터를 지도 형식에 맞게 변환
+        const formattedData = data.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          category: restaurant.cuisine,
+          rating: restaurant.rating || 4.0,
+          address: restaurant.address,
+          description: restaurant.description || `${restaurant.cuisine} 전문점입니다.`,
+          price: restaurant.price || "1만원~3만원",
+          position: { 
+            lat: restaurant.latitude || 37.5665, 
+            lng: restaurant.longitude || 126.9780 
+          },
+          hours: restaurant.businessHours || "11:00 - 22:00",
+          phone: restaurant.phone || "02-0000-0000",
+          parking: restaurant.parking || "주차 가능"
+        }));
+        setRestaurants(formattedData);
+        setFilteredRestaurants(formattedData);
+      } else {
+        console.error('레스토랑 데이터를 가져오는데 실패했습니다. 기본 데이터를 사용합니다.');
+        // 실패 시 기본 샘플 데이터 사용
+        const defaultData = [
+          {
+            id: 1,
+            name: "맛있는 한식집",
+            category: "한식",
+            rating: 4.5,
+            address: "서울시 강남구 테헤란로 123",
+            description: "전통 한식 전문점입니다.",
+            price: "1만원~3만원",
+            position: { lat: 37.5665, lng: 126.9780 },
+            hours: "11:00 - 22:00",
+            phone: "02-1234-5678",
+            parking: "주차 가능"
+          },
+          {
+            id: 2,
+            name: "신선한 일식집",
+            category: "일식",
+            rating: 4.3,
+            address: "서울시 강남구 역삼동 456",
+            description: "신선한 회와 초밥 전문점입니다.",
+            price: "2만원~5만원",
+            position: { lat: 37.5668, lng: 126.9785 },
+            hours: "11:30 - 22:30",
+            phone: "02-2345-6789",
+            parking: "주차 불가"
+          }
+        ];
+        setRestaurants(defaultData);
+        setFilteredRestaurants(defaultData);
+      }
+    } catch (error) {
+      console.error('레스토랑 데이터를 가져오는 중 오류 발생:', error);
+      // 에러 시에도 기본 데이터 사용
+      const defaultData = [
+        {
+          id: 1,
+          name: "맛있는 한식집",
+          category: "한식",
+          rating: 4.5,
+          address: "서울시 강남구 테헤란로 123",
+          description: "전통 한식 전문점입니다.",
+          price: "1만원~3만원",
+          position: { lat: 37.5665, lng: 126.9780 },
+          hours: "11:00 - 22:00",
+          phone: "02-1234-5678",
+          parking: "주차 가능"
+        },
+        {
+          id: 2,
+          name: "신선한 일식집",
+          category: "일식",
+          rating: 4.3,
+          address: "서울시 강남구 역삼동 456",
+          description: "신선한 회와 초밥 전문점입니다.",
+          price: "2만원~5만원",
+          position: { lat: 37.5668, lng: 126.9785 },
+          hours: "11:30 - 22:30",
+          phone: "02-2345-6789",
+          parking: "주차 불가"
+        }
+      ];
+      setRestaurants(defaultData);
+      setFilteredRestaurants(defaultData);
+    }
+  };
+
+  // 컴포넌트 마운트 시 데이터 가져오기
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
   // 검색 및 필터링 함수
   useEffect(() => {
-    let filtered = restaurantData;
+    let filtered = restaurants;
     
     // 검색어 필터링
     if (searchQuery.trim()) {
@@ -108,8 +209,7 @@ function KakaoMap() {
     });
     
     setFilteredRestaurants(filtered);
-    setRestaurants(filtered);
-  }, [searchQuery, selectedCategories, selectedMarkerStatus]);
+  }, [restaurants, searchQuery, selectedCategories, selectedMarkerStatus]);
 
   // 마커 업데이트 함수
   const updateMapMarkers = (restaurantsToShow) => {
@@ -264,8 +364,11 @@ function KakaoMap() {
       '양식': '🍝',
       '일식': '🍣',
       '중식': '🥢',
-      '동남아식': '🍜',
-      '카페': '☕'
+      '카페': '☕',
+      '디저트': '🍰',
+      '분식': '🍡',
+      '술': '🍺',
+      '태국': '🍜'
     };
     return icons[category] || '🍽️';
   };
@@ -285,9 +388,8 @@ function KakaoMap() {
   };
 
   useEffect(() => {
-    // restaurantData에서 데이터를 가져와서 사용
-    const restaurants = restaurantData;
-    setRestaurants(restaurants);
+    // 실제 데이터베이스에서 레스토랑 데이터 가져오기
+    fetchRestaurants();
 
     // URL 파라미터 확인
     const restaurantId = searchParams.get('restaurantId');
@@ -595,6 +697,8 @@ function KakaoMap() {
             ))}
           </div>
           
+
+
           {/* 선택된 맛집 정보 */}
           {selectedRestaurant && (
             <div className="selected-restaurant-info">

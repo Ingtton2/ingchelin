@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useVisit } from '../context/VisitContext';
 import { useFavorites } from '../context/FavoriteContext';
 
 const LocationBasedRecommendation = () => {
@@ -9,7 +8,6 @@ const LocationBasedRecommendation = () => {
   const [error, setError] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const { getRestaurantVisitStatus } = useVisit();
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
 
   // 두 지점 간의 거리 계산 (하버사인 공식)
@@ -29,12 +27,26 @@ const LocationBasedRecommendation = () => {
   // 백엔드에서 레스토랑 데이터 가져오기
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch('http://localhost:8081/api/restaurants');
+      const response = await fetch('http://localhost:8080/api/restaurants');
       if (!response.ok) {
         throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
       }
       const data = await response.json();
-      return data;
+      
+      // 방문 수 데이터 가져오기
+      const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
+      let visitCounts = {};
+      if (visitCountsResponse.ok) {
+        visitCounts = await visitCountsResponse.json();
+      }
+      
+      // 방문 수 데이터를 레스토랑 데이터에 추가
+      const restaurantsWithVisitCounts = data.map(restaurant => ({
+        ...restaurant,
+        totalRatings: visitCounts[restaurant.id] || 0
+      }));
+      
+      return restaurantsWithVisitCounts;
     } catch (error) {
       console.error('Failed to fetch restaurants:', error);
       throw error;
@@ -61,27 +73,38 @@ const LocationBasedRecommendation = () => {
           // 백엔드에서 레스토랑 데이터 가져오기
           const restaurants = await fetchRestaurants();
           
-          // 가까운 식당 찾기
-          const restaurantsWithDistance = restaurants.map(restaurant => {
-            const distance = calculateDistance(
-              latitude, 
-              longitude, 
-              restaurant.latitude, 
-              restaurant.longitude
-            );
-            return {
+          // 가까운 식당 찾기 (위도/경도가 있는 경우만)
+          const restaurantsWithDistance = restaurants
+            .filter(restaurant => restaurant.latitude && restaurant.longitude)
+            .map(restaurant => {
+              const distance = calculateDistance(
+                latitude, 
+                longitude, 
+                restaurant.latitude, 
+                restaurant.longitude
+              );
+              return {
+                ...restaurant,
+                distance: distance,
+                position: { lat: restaurant.latitude, lng: restaurant.longitude },
+                businessHours: "11:00 - 22:00", // 임시 데이터
+              };
+            });
+
+          // 위도/경도가 없는 경우 임시 위치 데이터 추가
+          const restaurantsWithoutLocation = restaurants
+            .filter(restaurant => !restaurant.latitude || !restaurant.longitude)
+            .map(restaurant => ({
               ...restaurant,
-              distance: distance,
-              position: { lat: restaurant.latitude, lng: restaurant.longitude },
-              totalRatings: Math.floor(Math.random() * 200) + 50, // 임시 데이터
-              price: "2만원~5만원", // 임시 데이터
-              businessHours: "11:00 - 22:00", // 임시 데이터
-              parking: "주차 가능" // 임시 데이터
-            };
-          });
+              distance: Math.random() * 10 + 1, // 임시 거리 (1-11km)
+              position: { lat: 37.5665, lng: 126.9780 }, // 서울 시청 좌표
+              businessHours: "11:00 - 22:00",
+            }));
+
+          const allRestaurants = [...restaurantsWithDistance, ...restaurantsWithoutLocation];
 
           // 거리순으로 정렬 (가까운 순) - 3개만 추천
-          const sortedRestaurants = restaurantsWithDistance
+          const sortedRestaurants = allRestaurants
             .sort((a, b) => a.distance - b.distance)
             .slice(0, 3); // 상위 3개만 추천
 
@@ -133,17 +156,7 @@ const LocationBasedRecommendation = () => {
     return stars;
   };
 
-  const getVisitStatusBadge = (restaurantId) => {
-    const status = getRestaurantVisitStatus(restaurantId);
-    switch(status) {
-      case 'liked': 
-        return <span className="visit-status-badge liked">👍 좋았던 곳</span>;
-      case 'disliked': 
-        return <span className="visit-status-badge disliked">👎 별로인 곳</span>;
-      default: 
-        return <span className="visit-status-badge not-visited">❓ 안 가본 곳</span>;
-    }
-  };
+
 
   // 찜하기 버튼 클릭 핸들러 (토글 기능)
   const handleFavorite = (restaurant) => {
@@ -171,7 +184,11 @@ const LocationBasedRecommendation = () => {
   // 길찾기 버튼 클릭 핸들러
   const handleNavigate = (restaurant) => {
     const { lat, lng } = restaurant.position;
-    window.open(`https://map.kakao.com/link/to/${restaurant.name},${lat},${lng}`, '_blank');
+    if (lat && lng) {
+      window.open(`https://map.kakao.com/link/to/${restaurant.name},${lat},${lng}`, '_blank');
+    } else {
+      alert('위치 정보가 없어 길찾기를 할 수 없습니다.');
+    }
   };
 
   return (
@@ -219,18 +236,13 @@ const LocationBasedRecommendation = () => {
               
               <div className="restaurant-meta">
                 <p>📍 {restaurant.address}</p>
-                <p>💰 {restaurant.price}</p>
+
                 <p>🕒 {restaurant.businessHours}</p>
                 <p>📞 {restaurant.phone}</p>
                 <p>🚗 {restaurant.parking}</p>
               </div>
 
-              <div className="visit-status-buttons">
-                <h4>방문 상태</h4>
-                <div className="visit-buttons">
-                  {getVisitStatusBadge(restaurant.id)}
-                </div>
-              </div>
+
               
               <div className="nearby-actions">
                 <button 
@@ -276,7 +288,7 @@ const LocationBasedRecommendation = () => {
                 
                 <div className="restaurant-details">
                   <p><strong>📍 주소:</strong> {selectedRestaurant.address}</p>
-                  <p><strong>💰 가격대:</strong> {selectedRestaurant.price}</p>
+
                   <p><strong>🕒 영업시간:</strong> {selectedRestaurant.businessHours}</p>
                   <p><strong>📞 전화번호:</strong> {selectedRestaurant.phone}</p>
                   <p><strong>🚗 주차:</strong> {selectedRestaurant.parking}</p>
@@ -287,12 +299,7 @@ const LocationBasedRecommendation = () => {
                   <p>{selectedRestaurant.description}</p>
                 </div>
 
-                <div className="visit-status-section">
-                  <h4>방문 상태</h4>
-                  <div className="visit-status-buttons">
-                    {getVisitStatusBadge(selectedRestaurant.id)}
-                  </div>
-                </div>
+
               </div>
             </div>
             

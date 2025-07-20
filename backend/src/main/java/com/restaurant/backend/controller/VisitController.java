@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/visits")
@@ -48,6 +49,31 @@ public class VisitController {
         }
         List<Visit> visits = visitRepository.findByRestaurant(restaurant);
         return ResponseEntity.ok(visits);
+    }
+    
+    // 레스토랑별 방문 수 조회
+    @GetMapping("/count/restaurant/{restaurantId}")
+    public ResponseEntity<Long> getRestaurantVisitCount(@PathVariable Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
+        if (restaurant == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Long visitCount = visitRepository.countByRestaurant(restaurant);
+        return ResponseEntity.ok(visitCount);
+    }
+    
+    // 모든 레스토랑의 방문 수 조회
+    @GetMapping("/count/all")
+    public ResponseEntity<Map<Long, Long>> getAllRestaurantVisitCounts() {
+        List<Restaurant> restaurants = restaurantRepository.findAll();
+        Map<Long, Long> visitCounts = new HashMap<>();
+        
+        for (Restaurant restaurant : restaurants) {
+            Long visitCount = visitRepository.countByRestaurant(restaurant);
+            visitCounts.put(restaurant.getId(), visitCount);
+        }
+        
+        return ResponseEntity.ok(visitCounts);
     }
     
     // 방문 기록 추가

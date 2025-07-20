@@ -3,8 +3,10 @@
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/Review.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/repository/VisitRepository.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/repository/UserRepository.java
+/Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/controller/KakaoMapController.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/config/DataInitializer.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/Category.java
+/Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/service/CoordinateUpdateService.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/repository/CategoryRepository.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/Restaurant.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/RestaurantBackendApplication.java
@@ -14,7 +16,9 @@
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/controller/RestaurantController.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/controller/CategoryController.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/Favorite.java
+/Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/controller/CoordinateController.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/Visit.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/entity/User.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/repository/FavoriteRepository.java
 /Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/controller/ReviewController.java
+/Users/ingtto/Documents/GitHub/ingchelin/backend/src/main/java/com/restaurant/backend/service/KakaoMapService.java

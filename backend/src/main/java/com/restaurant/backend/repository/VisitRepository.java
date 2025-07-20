@@ -13,4 +13,5 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
     List<Visit> findByUser(User user);
     List<Visit> findByRestaurant(Restaurant restaurant);
     List<Visit> findByUserAndRestaurant(User user, Restaurant restaurant);
+    Long countByRestaurant(Restaurant restaurant);
 } 

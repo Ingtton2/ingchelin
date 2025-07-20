@@ -1,0 +1,1837 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.restaurant:restaurant-backend >------------------
+[INFO] Building restaurant-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.0:run (default-cli) > test-compile @ restaurant-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ restaurant-backend ---
+[INFO] Copying 3 resources from src/main/resources to target/classes
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ restaurant-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 24 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ restaurant-backend ---
+[INFO] skip non existing resourceDirectory /Users/ingtto/Documents/GitHub/ingchelin/backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ restaurant-backend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.0:run (default-cli) < test-compile @ restaurant-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.0:run (default-cli) @ restaurant-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-07-20T22:28:49.881+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Starting RestaurantBackendApplication using Java 17.0.16 with PID 94708 (/Users/ingtto/Documents/GitHub/ingchelin/backend/target/classes started by ingtto in /Users/ingtto/Documents/GitHub/ingchelin/backend)
+2025-07-20T22:28:49.881+09:00 DEBUG 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-07-20T22:28:49.882+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-07-20T22:28:49.895+09:00  INFO 94708 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-07-20T22:28:49.895+09:00  INFO 94708 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-07-20T22:28:50.063+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-20T22:28:50.080+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 14 ms. Found 6 JPA repository interfaces.
+2025-07-20T22:28:50.228+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-07-20T22:28:50.231+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-20T22:28:50.231+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-07-20T22:28:50.242+09:00  INFO 94708 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-20T22:28:50.243+09:00  INFO 94708 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 348 ms
+2025-07-20T22:28:50.267+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-20T22:28:50.300+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@d467c97
+2025-07-20T22:28:50.301+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-20T22:28:50.325+09:00  INFO 94708 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-20T22:28:50.338+09:00  INFO 94708 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
+2025-07-20T22:28:50.350+09:00  INFO 94708 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-20T22:28:50.416+09:00  INFO 94708 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-20T22:28:50.435+09:00  WARN 94708 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-20T22:28:50.681+09:00  INFO 94708 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-20T22:28:50.750+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T22:28:50.842+09:00  INFO 94708 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-07-20T22:28:51.048+09:00  WARN 94708 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-20T22:28:51.144+09:00  INFO 94708 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-07-20T22:28:51.152+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+2025-07-20T22:28:51.155+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Started RestaurantBackendApplication in 1.371 seconds (process running for 1.483)
+Hibernate: 
+    select
+        count(*) 
+    from
+        restaurants r1_0
+2025-07-20T22:29:24.823+09:00  INFO 94708 --- [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-20T22:29:24.823+09:00  INFO 94708 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-20T22:29:24.825+09:00  INFO 94708 --- [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Keyword search failed for 구좌리 얼크니손칼국수 분당금곡직영점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 칠성집갈매기: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 평창 닭다리고추장불고기 자양본점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Keyword search failed for 청정해역 북한산조개구이 오금본점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 민경이네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 민경이네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 민경이네: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Keyword search failed for 랑이식당: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 말자네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 말자네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 말자네: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 세이버릿: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 쭈꾸미나루: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 라온 아시안 다이닝 바: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 삼동소바 분당점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 사누키진우동: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 일편뎅심 판교직영점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 란짠타부리: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 르코르크: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 토리아에즈 가락점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 루프11: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 샤오짠 서초점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 수타우동겐: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Keyword search failed for 구좌리 얼크니손칼국수 분당금곡직영점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 칠성집갈매기: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 평창 닭다리고추장불고기 자양본점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Keyword search failed for 청정해역 북한산조개구이 오금본점: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 민경이네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 민경이네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 민경이네: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Keyword search failed for 랑이식당: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 말자네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 말자네: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Keyword search failed for 말자네: 500 Internal Server Error: "{"code":-2, "msg":"Max (query) length 100"}"
+Address search failed for 세이버릿: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 쭈꾸미나루: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 라온 아시안 다이닝 바: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 삼동소바 분당점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 사누키진우동: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Address search failed for 일편뎅심 판교직영점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 란짠타부리: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 르코르크: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 토리아에즈 가락점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 루프11: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Address search failed for 샤오짠 서초점: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Address search failed for 수타우동겐: 400 Bad Request: "{"documents":[],"meta":{"is_end":true,"pageable_count":0,"total_count":0}}"
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.comment,
+        r1_0.created_at,
+        r1_0.rating,
+        r1_0.restaurant_id,
+        r1_0.updated_at,
+        r1_0.user_id 
+    from
+        reviews r1_0 
+    where
+        r1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+2025-07-20T23:16:01.707+09:00  WARN 94708 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m11s5ms).
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        r1_0.id,
+        r1_0.address,
+        r1_0.created_at,
+        r1_0.cuisine,
+        r1_0.description,
+        r1_0.latitude,
+        r1_0.longitude,
+        r1_0.name,
+        r1_0.phone,
+        r1_0.rating,
+        r1_0.updated_at 
+    from
+        restaurants r1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.password,
+        u1_0.updated_at,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.restaurant_id,
+        f1_0.user_id 
+    from
+        favorites f1_0 
+    where
+        f1_0.user_id=?
+Hibernate: 
+    select
+        v1_0.id,
+        v1_0.created_at,
+        v1_0.rating,
+        v1_0.restaurant_id,
+        v1_0.review,
+        v1_0.user_id,
+        v1_0.visit_date 
+    from
+        visits v1_0 
+    where
+        v1_0.user_id=?
+2025-07-20T23:26:18.406+09:00  INFO 94708 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-07-20T23:26:18.411+09:00  INFO 94708 --- [       Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T23:26:18.412+09:00  INFO 94708 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-20T23:26:18.413+09:00  INFO 94708 --- [       Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-07-20T23:26:18.442+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Starting RestaurantBackendApplication using Java 17.0.16 with PID 94708 (/Users/ingtto/Documents/GitHub/ingchelin/backend/target/classes started by ingtto in /Users/ingtto/Documents/GitHub/ingchelin/backend)
+2025-07-20T23:26:18.442+09:00 DEBUG 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-07-20T23:26:18.442+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-07-20T23:26:18.486+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-20T23:26:18.489+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 6 JPA repository interfaces.
+2025-07-20T23:26:18.525+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2025-07-20T23:26:18.525+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-20T23:26:18.525+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-07-20T23:26:18.528+09:00  INFO 94708 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-20T23:26:18.528+09:00  INFO 94708 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 85 ms
+2025-07-20T23:26:18.536+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-07-20T23:26:18.542+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@5ac28dde
+2025-07-20T23:26:18.543+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-07-20T23:26:18.548+09:00  INFO 94708 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-20T23:26:18.548+09:00  INFO 94708 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-20T23:26:18.549+09:00  INFO 94708 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-20T23:26:18.557+09:00  WARN 94708 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-20T23:26:18.586+09:00  INFO 94708 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-20T23:26:18.627+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T23:26:18.713+09:00  WARN 94708 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-20T23:26:18.750+09:00  INFO 94708 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-07-20T23:26:18.754+09:00  WARN 94708 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-07-20T23:26:18.754+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T23:26:18.755+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-07-20T23:26:18.758+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-07-20T23:26:18.760+09:00  INFO 94708 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-07-20T23:26:18.765+09:00 ERROR 94708 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8082 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8082 or configure this application to listen on another port.
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-07-20T23:39:54.632+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Starting RestaurantBackendApplication using Java 17.0.16 with PID 94708 (/Users/ingtto/Documents/GitHub/ingchelin/backend/target/classes started by ingtto in /Users/ingtto/Documents/GitHub/ingchelin/backend)
+2025-07-20T23:39:54.632+09:00 DEBUG 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-07-20T23:39:54.632+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-07-20T23:39:54.669+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-20T23:39:54.673+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 6 JPA repository interfaces.
+2025-07-20T23:39:54.701+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-20T23:39:54.702+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-20T23:39:54.702+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-07-20T23:39:54.705+09:00  INFO 94708 --- [  restartedMain] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-07-20T23:39:54.705+09:00  INFO 94708 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 73 ms
+2025-07-20T23:39:54.713+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2025-07-20T23:39:54.719+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@69bc7219
+2025-07-20T23:39:54.719+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2025-07-20T23:39:54.724+09:00  INFO 94708 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-20T23:39:54.724+09:00  INFO 94708 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-20T23:39:54.725+09:00  INFO 94708 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-20T23:39:54.732+09:00  WARN 94708 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-20T23:39:54.755+09:00  INFO 94708 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-20T23:39:54.799+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T23:39:54.875+09:00  WARN 94708 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-20T23:39:54.909+09:00  INFO 94708 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-07-20T23:39:54.914+09:00  WARN 94708 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-07-20T23:39:54.914+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-20T23:39:54.914+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2025-07-20T23:39:54.932+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.
+2025-07-20T23:39:54.934+09:00  INFO 94708 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-07-20T23:39:54.935+09:00 ERROR 94708 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-07-21T00:54:47.399+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Starting RestaurantBackendApplication using Java 17.0.16 with PID 94708 (/Users/ingtto/Documents/GitHub/ingchelin/backend/target/classes started by ingtto in /Users/ingtto/Documents/GitHub/ingchelin/backend)
+2025-07-21T00:54:47.399+09:00 DEBUG 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-07-21T00:54:47.399+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-07-21T00:54:47.438+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-21T00:54:47.442+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 6 JPA repository interfaces.
+2025-07-21T00:54:47.469+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-21T00:54:47.469+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-21T00:54:47.469+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-07-21T00:54:47.472+09:00  INFO 94708 --- [  restartedMain] o.a.c.c.C.[Tomcat-2].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-07-21T00:54:47.472+09:00  INFO 94708 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 72 ms
+2025-07-21T00:54:47.479+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2025-07-21T00:54:47.482+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@73a77771
+2025-07-21T00:54:47.482+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2025-07-21T00:54:47.487+09:00  INFO 94708 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-21T00:54:47.487+09:00  INFO 94708 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-21T00:54:47.489+09:00  INFO 94708 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-21T00:54:47.491+09:00  WARN 94708 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-21T00:54:47.515+09:00  INFO 94708 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-21T00:54:47.545+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-21T00:54:47.623+09:00  WARN 94708 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-21T00:54:47.657+09:00  INFO 94708 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-07-21T00:54:47.660+09:00  WARN 94708 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-07-21T00:54:47.660+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-21T00:54:47.661+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2025-07-21T00:54:47.679+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.
+2025-07-21T00:54:47.681+09:00  INFO 94708 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-07-21T00:54:47.681+09:00 ERROR 94708 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-07-21T01:26:35.214+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Starting RestaurantBackendApplication using Java 17.0.16 with PID 94708 (/Users/ingtto/Documents/GitHub/ingchelin/backend/target/classes started by ingtto in /Users/ingtto/Documents/GitHub/ingchelin/backend)
+2025-07-21T01:26:35.214+09:00 DEBUG 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-07-21T01:26:35.214+09:00  INFO 94708 --- [  restartedMain] c.r.b.RestaurantBackendApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-07-21T01:26:35.247+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-21T01:26:35.251+09:00  INFO 94708 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 6 JPA repository interfaces.
+2025-07-21T01:26:35.277+09:00  INFO 94708 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-21T01:26:35.277+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-21T01:26:35.277+09:00  INFO 94708 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-07-21T01:26:35.282+09:00  INFO 94708 --- [  restartedMain] o.a.c.c.C.[Tomcat-3].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-07-21T01:26:35.282+09:00  INFO 94708 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 68 ms
+2025-07-21T01:26:35.289+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Starting...
+2025-07-21T01:26:35.293+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@7664ea34
+2025-07-21T01:26:35.293+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Start completed.
+2025-07-21T01:26:35.298+09:00  INFO 94708 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-21T01:26:35.298+09:00  INFO 94708 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-21T01:26:35.299+09:00  INFO 94708 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-21T01:26:35.304+09:00  WARN 94708 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-21T01:26:35.326+09:00  INFO 94708 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-21T01:26:35.361+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-21T01:26:35.438+09:00  WARN 94708 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-21T01:26:35.468+09:00  INFO 94708 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-07-21T01:26:35.471+09:00  WARN 94708 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-07-21T01:26:35.472+09:00  INFO 94708 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-21T01:26:35.472+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown initiated...
+2025-07-21T01:26:35.483+09:00  INFO 94708 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-5 - Shutdown completed.
+2025-07-21T01:26:35.485+09:00  INFO 94708 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-07-21T01:26:35.486+09:00 ERROR 94708 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+

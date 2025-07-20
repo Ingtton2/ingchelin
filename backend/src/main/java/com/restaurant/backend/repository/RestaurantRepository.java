@@ -23,4 +23,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     List<Restaurant> findNearby(@Param("lat") Double latitude, 
                                 @Param("lng") Double longitude, 
                                 @Param("radius") Double radius);
+    
+    // 중복 체크를 위한 메서드
+    boolean existsByNameAndAddress(String name, String address);
 } 

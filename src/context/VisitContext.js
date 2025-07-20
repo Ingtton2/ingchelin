@@ -22,7 +22,7 @@ export const VisitProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8081/api/visits/user/${user.id}`);
+      const response = await fetch(`http://localhost:8080/api/visits/user/${user.id}`);
       if (response.ok) {
         const visits = await response.json();
         const statusMap = {};
@@ -57,7 +57,7 @@ export const VisitProvider = ({ children }) => {
     try {
       const rating = status === 'liked' ? 5 : 2; // 좋아함: 5점, 싫어함: 2점
       
-      const response = await fetch('http://localhost:8081/api/visits', {
+      const response = await fetch('http://localhost:8080/api/visits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

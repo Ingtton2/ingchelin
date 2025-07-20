@@ -18,13 +18,15 @@ function Favorites() {
   const [userRatings, setUserRatings] = useState({});
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [showVisitConfirmModal, setShowVisitConfirmModal] = useState(false);
+  const [pendingRating, setPendingRating] = useState(null);
 
   // 사용자 평점 불러오기
   const loadUserRatings = async () => {
     if (!currentUser) return;
     
     try {
-      const response = await fetch(`http://localhost:8081/api/reviews/user/${currentUser.id}`);
+      const response = await fetch(`http://localhost:8080/api/reviews/user/${currentUser.id}`);
       if (response.ok) {
         const reviews = await response.json();
         const ratingsMap = {};
@@ -78,16 +80,57 @@ function Favorites() {
     return colors[category] || '#667eea';
   };
 
+  // 방문 확인 모달 열기
+  const openVisitConfirmModal = (restaurantId, rating) => {
+    setPendingRating({ restaurantId, rating });
+    setShowVisitConfirmModal(true);
+  };
+
+  // 방문 확인 처리
+  const handleVisitConfirm = async (hasVisited) => {
+    setShowVisitConfirmModal(false);
+    
+    if (!hasVisited) {
+      alert('방문하지 않은 맛집에는 별점을 매길 수 없습니다.\n\n먼저 맛집을 방문해보세요! 🍽️');
+      return;
+    }
+
+    // 방문했다면 평점 저장 진행
+    await handleRatingSubmit(pendingRating.restaurantId, pendingRating.rating);
+    setPendingRating(null);
+  };
+
   // 사용자 평점 처리
-  const handleRating = async (restaurantId, rating) => {
+  const handleRatingSubmit = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
       return;
     }
 
+    console.log('평점 저장 시도:', { currentUser, restaurantId, rating });
+
     try {
+      // 방문 기록 저장
+      const visitResponse = await fetch('http://localhost:8080/api/visits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          restaurantId: restaurantId,
+          visitDate: new Date().toISOString(),
+          rating: rating,
+          comment: `${rating}점 평가`
+        })
+      });
+
+      if (!visitResponse.ok) {
+        console.error('방문 기록 저장 실패:', visitResponse.status);
+      }
+
       // 백엔드 API로 평점 저장
-      const response = await fetch('http://localhost:8081/api/reviews', {
+      const response = await fetch('http://localhost:8080/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +156,7 @@ function Favorites() {
         localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
         setShowRatingModal(false);
         setSelectedRestaurant(null);
-        alert('평점이 저장되었습니다! ⭐');
+        alert('평점과 방문 기록이 저장되었습니다! ⭐');
       } else {
         alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
       }
@@ -121,6 +164,11 @@ function Favorites() {
       console.error('평점 저장 중 오류:', error);
       alert('평점 저장 중 오류가 발생했습니다.');
     }
+  };
+
+  // 별점 클릭 처리
+  const handleRating = (restaurantId, rating) => {
+    openVisitConfirmModal(restaurantId, rating);
   };
 
   // 사용자 평점 가져오기
@@ -280,6 +328,35 @@ function Favorites() {
                   현재 평점: {getUserRating(selectedRestaurant.id)}점
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 방문 확인 모달 */}
+      {showVisitConfirmModal && (
+        <div className="visit-confirm-modal">
+          <div className="visit-confirm-modal-content">
+            <div className="visit-confirm-modal-header">
+              <h3>방문 확인</h3>
+            </div>
+            <div className="visit-confirm-modal-body">
+              <p>이 맛집을 방문하셨나요?</p>
+              <p className="visit-note">방문하지 않았다면 별점을 매길 수 없습니다.</p>
+            </div>
+            <div className="visit-confirm-modal-actions">
+              <button 
+                className="visit-confirm-btn yes"
+                onClick={() => handleVisitConfirm(true)}
+              >
+                네
+              </button>
+              <button 
+                className="visit-confirm-btn no"
+                onClick={() => handleVisitConfirm(false)}
+              >
+                아니오
+              </button>
             </div>
           </div>
         </div>

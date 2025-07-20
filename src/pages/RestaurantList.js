@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoriteContext';
 import { restaurantAPI } from '../services/api';
+
 import './RestaurantList.css';
 
 function RestaurantList() {
@@ -12,17 +13,19 @@ function RestaurantList() {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showVisitConfirmModal, setShowVisitConfirmModal] = useState(false);
+  const [pendingRating, setPendingRating] = useState(null);
   const { currentUser } = useAuth();
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
 
-  const categories = ['all', '한식', '양식', '일식', '중식', '베트남', '인도', '태국', '멕시칸', '프랑스'];
+  const categories = ['all', '한식', '중식', '일식', '양식', '분식', '태국', '술', '카페', '디저트'];
 
   // 사용자 평점 불러오기
   const loadUserRatings = async () => {
     if (!currentUser) return;
     
     try {
-      const response = await fetch(`http://localhost:8081/api/reviews/user/${currentUser.id}`);
+      const response = await fetch(`http://localhost:8080/api/reviews/user/${currentUser.id}`);
       if (response.ok) {
         const reviews = await response.json();
         const ratingsMap = {};
@@ -52,19 +55,26 @@ function RestaurantList() {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8081/api/restaurants');
+        const response = await fetch('http://localhost:8080/api/restaurants');
         if (!response.ok) {
           throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
         }
         const data = await response.json();
+        
+        // 방문 수 데이터 가져오기
+        const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
+        let visitCounts = {};
+        if (visitCountsResponse.ok) {
+          visitCounts = await visitCountsResponse.json();
+        }
+        
         const restaurantsWithExtraData = data.map(restaurant => ({
           ...restaurant,
           category: restaurant.cuisine, // cuisine을 category로 매핑
           location: { lat: restaurant.latitude, lng: restaurant.longitude }, // position을 location으로 매핑
-          totalRatings: Math.floor(Math.random() * 200) + 50, // 랜덤 리뷰 수
+          totalRatings: visitCounts[restaurant.id] || 0, // 실제 방문 수 사용
           price: "2만원~5만원", // 임시 데이터
           hours: "11:00 - 22:00", // 임시 데이터
-          parking: "주차 가능", // 임시 데이터
           userRatings: {}
         }));
 
@@ -86,15 +96,55 @@ function RestaurantList() {
     fetchRestaurants();
   }, []);
 
-  const handleRating = async (restaurantId, rating) => {
+  // 방문 확인 모달 열기
+  const openVisitConfirmModal = (restaurantId, rating) => {
+    setPendingRating({ restaurantId, rating });
+    setShowVisitConfirmModal(true);
+  };
+
+  // 방문 확인 처리
+  const handleVisitConfirm = async (hasVisited) => {
+    setShowVisitConfirmModal(false);
+    
+    if (!hasVisited) {
+      alert('방문하지 않은 맛집에는 별점을 매길 수 없습니다.\n\n먼저 맛집을 방문해보세요! 🍽️');
+      return;
+    }
+
+    // 방문했다면 평점 저장 진행
+    await handleRatingSubmit(pendingRating.restaurantId, pendingRating.rating);
+    setPendingRating(null);
+  };
+
+  // 사용자 평점 처리
+  const handleRatingSubmit = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
       return;
     }
 
     try {
+      // 방문 기록 저장
+      const visitResponse = await fetch('http://localhost:8080/api/visits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          restaurantId: restaurantId,
+          visitDate: new Date().toISOString(),
+          rating: rating,
+          comment: `${rating}점 평가`
+        })
+      });
+
+      if (!visitResponse.ok) {
+        console.error('방문 기록 저장 실패:', visitResponse.status);
+      }
+
       // 백엔드 API로 평점 저장
-      const response = await fetch('http://localhost:8081/api/reviews', {
+      const response = await fetch('http://localhost:8080/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +168,7 @@ function RestaurantList() {
 
         setUserRatings(newUserRatings);
         localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
-        alert('평점이 저장되었습니다! ⭐');
+        alert('평점과 방문 기록이 저장되었습니다! ⭐');
       } else {
         alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
       }
@@ -126,6 +176,11 @@ function RestaurantList() {
       console.error('평점 저장 중 오류:', error);
       alert('평점 저장 중 오류가 발생했습니다.');
     }
+  };
+
+  // 별점 클릭 처리
+  const handleRating = (restaurantId, rating) => {
+    openVisitConfirmModal(restaurantId, rating);
   };
 
   // 검색어와 카테고리로 필터링
@@ -151,8 +206,11 @@ function RestaurantList() {
       '양식': '🍝',
       '일식': '🍣',
       '중식': '🥢',
-      '동남아식': '🍜',
-      '카페': '☕'
+      '카페': '☕',
+      '디저트': '🍰',
+      '분식': '🍡',
+      '술': '🍺',
+      '태국': '🍜'
     };
     return icons[category] || '🍽️';
   };
@@ -223,12 +281,12 @@ function RestaurantList() {
                     ))}
                   </div>
                   <span className="rating-text">{restaurant.rating}</span>
-                  <span className="total-ratings">({restaurant.totalRatings}개 리뷰)</span>
+                  <span className="total-ratings">({restaurant.totalRatings}명 방문)</span>
                 </div>
 
                 <div className="restaurant-meta">
                   <p className="address">📍 {restaurant.address}</p>
-                  <p className="price">💰 {restaurant.price}</p>
+
                   <p className="hours">🕒 {restaurant.hours}</p>
                   <p className="phone">📞 {restaurant.phone}</p>
                   <p className="parking">🚗 {restaurant.parking}</p>
@@ -258,6 +316,8 @@ function RestaurantList() {
                   📋 상세 정보
                 </button>
               </div>
+              
+
             </div>
           </div>
         ))}
@@ -288,7 +348,7 @@ function RestaurantList() {
                         ★
                       </span>
                     ))}
-                    {selectedRestaurant.rating} ({selectedRestaurant.totalRatings}개 리뷰)
+                    {selectedRestaurant.rating} ({selectedRestaurant.totalRatings}명 방문)
                   </span>
                 </div>
                 
@@ -340,6 +400,37 @@ function RestaurantList() {
                   현재 평점: {getUserRating(selectedRestaurant.id)}점
                 </p>
               </div>
+              
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 방문 확인 모달 */}
+      {showVisitConfirmModal && (
+        <div className="visit-confirm-modal">
+          <div className="visit-confirm-modal-content">
+            <div className="visit-confirm-modal-header">
+              <h3>방문 확인</h3>
+            </div>
+            <div className="visit-confirm-modal-body">
+              <p>이 맛집을 방문하셨나요?</p>
+              <p className="visit-note">방문하지 않았다면 별점을 매길 수 없습니다.</p>
+            </div>
+            <div className="visit-confirm-modal-actions">
+              <button 
+                className="visit-confirm-btn yes"
+                onClick={() => handleVisitConfirm(true)}
+              >
+                네
+              </button>
+              <button 
+                className="visit-confirm-btn no"
+                onClick={() => handleVisitConfirm(false)}
+              >
+                아니오
+              </button>
             </div>
           </div>
         </div>

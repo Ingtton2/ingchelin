@@ -35,6 +35,9 @@ public class Restaurant {
     @Column
     private Double longitude;
     
+    @Column
+    private String parking;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -44,7 +47,7 @@ public class Restaurant {
     // Constructors
     public Restaurant() {}
     
-    public Restaurant(String name, String address, String phone, String cuisine, Double rating, String description, Double latitude, Double longitude) {
+    public Restaurant(String name, String address, String phone, String cuisine, Double rating, String description, Double latitude, Double longitude, String parking) {
         this.name = name;
         this.address = address;
         this.phone = phone;
@@ -53,6 +56,7 @@ public class Restaurant {
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.parking = parking;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -128,6 +132,14 @@ public class Restaurant {
     
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+    
+    public String getParking() {
+        return parking;
+    }
+    
+    public void setParking(String parking) {
+        this.parking = parking;
     }
     
     public LocalDateTime getCreatedAt() {

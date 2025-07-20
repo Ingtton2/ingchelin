@@ -20,22 +20,32 @@ function Home() {
     const fetchTopRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8081/api/restaurants');
+        const response = await fetch('http://localhost:8080/api/restaurants');
         if (!response.ok) {
           throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
         }
         const data = await response.json();
+        
+        // 방문 수 데이터 가져오기
+        const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
+        let visitCounts = {};
+        if (visitCountsResponse.ok) {
+          visitCounts = await visitCountsResponse.json();
+        }
+        
         // 평점이 높은 순으로 정렬하여 상위 3개 선택
         const sortedRestaurants = data
           .sort((a, b) => b.rating - a.rating)
           .slice(0, 3)
           .map(restaurant => ({
             ...restaurant,
-            totalRatings: Math.floor(Math.random() * 200) + 50, // 임시 데이터
+            totalRatings: visitCounts[restaurant.id] || 0, // 실제 방문 수 사용
             price: "2만원~5만원", // 임시 데이터
             businessHours: "11:00 - 22:00", // 임시 데이터
-            parking: "주차 가능", // 임시 데이터
-            position: { lat: restaurant.latitude, lng: restaurant.longitude }
+            position: { 
+              lat: restaurant.latitude || 37.5665, 
+              lng: restaurant.longitude || 126.9780 
+            }
           }));
         setTopRestaurants(sortedRestaurants);
       } catch (err) {
@@ -110,7 +120,11 @@ function Home() {
   // 길찾기 버튼 클릭 핸들러
   const handleNavigate = (restaurant) => {
     const { lat, lng } = restaurant.position;
-    window.open(`https://map.kakao.com/link/to/${restaurant.name},${lat},${lng}`, '_blank');
+    if (lat && lng) {
+      window.open(`https://map.kakao.com/link/to/${restaurant.name},${lat},${lng}`, '_blank');
+    } else {
+      alert('위치 정보가 없어 길찾기를 할 수 없습니다.');
+    }
   };
 
   return (
@@ -158,14 +172,14 @@ function Home() {
                   {renderStars(restaurant.rating)}
                 </div>
                 <div className="rating-text">{restaurant.rating}</div>
-                <div className="total-ratings">({restaurant.totalRatings}명)</div>
+                <div className="total-ratings">({restaurant.totalRatings}명 방문)</div>
               </div>
               
               <div className="description">{restaurant.description}</div>
               
               <div className="restaurant-meta">
                 <p>📍 {restaurant.address}</p>
-                <p>💰 {restaurant.price}</p>
+
                 <p>🕒 {restaurant.businessHours}</p>
                 <p>📞 {restaurant.phone}</p>
                 <p>🚗 {restaurant.parking}</p>
@@ -212,7 +226,7 @@ function Home() {
                 
                 <div className="restaurant-details">
                   <p><strong>📍 주소:</strong> {selectedRestaurant.address}</p>
-                  <p><strong>💰 가격대:</strong> {selectedRestaurant.price}</p>
+
                   <p><strong>🕒 영업시간:</strong> {selectedRestaurant.businessHours}</p>
                   <p><strong>📞 전화번호:</strong> {selectedRestaurant.phone}</p>
                   <p><strong>🚗 주차:</strong> {selectedRestaurant.parking}</p>

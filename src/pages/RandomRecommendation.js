@@ -9,17 +9,19 @@ const RandomRecommendation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [restaurants, setRestaurants] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({
+    categories: ['all'],
+    regions: ['all'],
+    priceRanges: ['all']
+  });
   const [filters, setFilters] = useState({
     category: 'all',
     region: 'all',
     maxDistance: 'all',
-    maxPrice: 'all',
     mood: 'all'
   });
   const { addToFavorites, removeFromFavorites, isInFavorites } = useFavorites();
   const { getRestaurantVisitStatus } = useVisit();
-
-  const categories = ['all', '한식', '양식', '일식', '중식', '베트남', '인도', '태국', '멕시칸', '프랑스'];
 
   // 백엔드에서 레스토랑 데이터 가져오기
   useEffect(() => {
@@ -34,6 +36,9 @@ const RandomRecommendation = () => {
           position: { lat: restaurant.latitude, lng: restaurant.longitude }
         }));
         setRestaurants(restaurantsWithExtraData);
+        
+        // 필터 옵션 동적 생성
+        generateFilterOptions(restaurantsWithExtraData);
       } catch (err) {
         console.error('Failed to fetch restaurants:', err);
       }
@@ -42,29 +47,56 @@ const RandomRecommendation = () => {
     fetchRestaurants();
   }, []);
 
-  const regionOptions = [
-    { value: 'all', label: '전체 지역' },
-    { value: 'seoul', label: '서울시' },
-    { value: 'bundang', label: '성남시 분당구' }
-  ];
-  const distanceOptions = [
-    { value: 'all', label: '거리 무관' },
-    { value: '1', label: '1km 이내' },
-    { value: '2', label: '2km 이내' },
-    { value: '3', label: '3km 이내' }
-  ];
-  const priceOptions = [
-    { value: 'all', label: '가격 무관' },
-    { value: '10000', label: '1만원 이하' },
-    { value: '20000', label: '2만원 이하' },
-    { value: '30000', label: '3만원 이하' }
-  ];
-  const moodOptions = [
-    { value: 'all', label: '분위기 무관' },
-    { value: 'solo', label: '혼밥 가능' },
-    { value: 'date', label: '데이트 코스' },
-    { value: 'group', label: '단체 모임' }
-  ];
+  // 데이터베이스에서 필터 옵션 동적 생성
+  const generateFilterOptions = (restaurants) => {
+    if (!restaurants.length) return;
+
+    // 카테고리 옵션 생성
+    const categories = ['all', ...new Set(restaurants.map(r => r.cuisine))];
+    
+    // 지역 옵션 생성 (시/구 단위로 그룹화)
+    const regions = ['all'];
+    const regionMap = {};
+    
+    restaurants.forEach(restaurant => {
+      const addressParts = restaurant.address.split(' ');
+      if (addressParts.length >= 2) {
+        const region = `${addressParts[0]} ${addressParts[1]}`;
+        if (!regionMap[region]) {
+          regionMap[region] = 0;
+          regions.push(region);
+        }
+        regionMap[region]++;
+      }
+    });
+
+
+
+    // 거리 옵션
+    const distanceOptions = [
+      { value: 'all', label: '거리 무관' },
+      { value: '1', label: '1km 이내' },
+      { value: '2', label: '2km 이내' },
+      { value: '3', label: '3km 이내' },
+      { value: '5', label: '5km 이내' }
+    ];
+
+    // 분위기 옵션
+    const moodOptions = [
+      { value: 'all', label: '분위기 무관' },
+      { value: 'solo', label: '혼밥 가능' },
+      { value: 'date', label: '데이트 코스' },
+      { value: 'group', label: '단체 모임' },
+      { value: 'family', label: '가족 모임' }
+    ];
+
+    setFilterOptions({
+      categories,
+      regions,
+      distanceOptions,
+      moodOptions
+    });
+  };
 
   // 거리 계산 함수
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -79,11 +111,7 @@ const RandomRecommendation = () => {
     return R * c; // km
   };
 
-  // 가격 문자열에서 숫자 추출
-  const extractPrice = (priceStr) => {
-    const match = priceStr.match(/(\d+)만원/);
-    return match ? parseInt(match[1]) * 10000 : 50000;
-  };
+
 
   // 필터링된 레스토랑 목록 생성
   const getFilteredRestaurants = () => {
@@ -91,44 +119,35 @@ const RandomRecommendation = () => {
 
     // 카테고리 필터
     if (filters.category !== 'all') {
-      filtered = filtered.filter(restaurant => restaurant.category === filters.category);
+      filtered = filtered.filter(restaurant => restaurant.cuisine === filters.category);
     }
 
     // 지역 필터
     if (filters.region !== 'all') {
-      if (filters.region === 'seoul') {
-        filtered = filtered.filter(restaurant => 
-          restaurant.address.includes('서울시')
-        );
-      } else if (filters.region === 'bundang') {
-        filtered = filtered.filter(restaurant => 
-          restaurant.address.includes('성남시 분당구')
-        );
-      }
-    }
-
-    // 가격 필터
-    if (filters.maxPrice !== 'all') {
-      const maxPrice = parseInt(filters.maxPrice);
       filtered = filtered.filter(restaurant => {
-        const price = extractPrice(restaurant.price);
-        return price <= maxPrice;
+        return restaurant.address.includes(filters.region);
       });
     }
 
-    // 분위기 필터 (간단한 구현)
+
+
+    // 분위기 필터 (실제 데이터 기반)
     if (filters.mood !== 'all') {
       if (filters.mood === 'solo') {
         filtered = filtered.filter(restaurant => 
-          restaurant.category !== '양식' || restaurant.price.includes('1만원')
+          restaurant.cuisine === '한식' || restaurant.cuisine === '분식'
         );
       } else if (filters.mood === 'date') {
         filtered = filtered.filter(restaurant => 
-          restaurant.category === '양식' || restaurant.category === '카페'
+          restaurant.cuisine === '양식' || restaurant.cuisine === '카페' || restaurant.cuisine === '일식'
         );
       } else if (filters.mood === 'group') {
         filtered = filtered.filter(restaurant => 
-          restaurant.parking.includes('가능')
+          restaurant.cuisine === '중식' || restaurant.cuisine === '한식'
+        );
+      } else if (filters.mood === 'family') {
+        filtered = filtered.filter(restaurant => 
+          restaurant.cuisine === '한식' || restaurant.cuisine === '중식'
         );
       }
     }
@@ -141,9 +160,18 @@ const RandomRecommendation = () => {
     setIsLoading(true);
     
     try {
-      // 백엔드에서 랜덤 레스토랑 가져오기
-      const response = await restaurantAPI.getRandom();
-      const randomRestaurant = response.data;
+      // 필터링된 레스토랑 목록 가져오기
+      const filteredRestaurants = getFilteredRestaurants();
+      
+      if (filteredRestaurants.length === 0) {
+        alert('선택한 필터 조건에 맞는 레스토랑이 없습니다. 필터를 조정해주세요.');
+        setIsLoading(false);
+        return;
+      }
+      
+      // 필터링된 목록에서 랜덤 선택
+      const randomIndex = Math.floor(Math.random() * filteredRestaurants.length);
+      const randomRestaurant = filteredRestaurants[randomIndex];
       
       // 추가 데이터 매핑
       const restaurantWithExtraData = {
@@ -176,10 +204,8 @@ const RandomRecommendation = () => {
     if (currentRecommendation) {
       if (isInFavorites(currentRecommendation.id)) {
         removeFromFavorites(currentRecommendation.id);
-        alert('찜 목록에서 제거되었습니다! 👋');
       } else {
         addToFavorites(currentRecommendation);
-        alert('찜 목록에 추가되었습니다! 🎉');
       }
     }
   };
@@ -212,8 +238,11 @@ const RandomRecommendation = () => {
       '양식': '🍝',
       '일식': '🍣',
       '중식': '🥢',
-      '동남아식': '🍜',
-      '카페': '☕'
+      '카페': '☕',
+      '디저트': '🍰',
+      '분식': '🍡',
+      '술': '🍺',
+      '태국': '🍜'
     };
     return icons[category] || '🍽️';
   };
@@ -257,7 +286,7 @@ const RandomRecommendation = () => {
                 value={filters.category} 
                 onChange={(e) => handleFilterChange('category', e.target.value)}
               >
-                {categories.map(cat => (
+                {filterOptions.categories.map(cat => (
                   <option key={cat} value={cat}>
                     {cat === 'all' ? '전체' : cat}
                   </option>
@@ -271,27 +300,15 @@ const RandomRecommendation = () => {
                 value={filters.region} 
                 onChange={(e) => handleFilterChange('region', e.target.value)}
               >
-                {regionOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                {filterOptions.regions.map(region => (
+                  <option key={region} value={region}>
+                    {region === 'all' ? '전체 지역' : region}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="filter-group">
-              <label>가격대:</label>
-              <select 
-                value={filters.maxPrice} 
-                onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-              >
-                {priceOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+
 
             <div className="filter-group">
               <label>분위기:</label>
@@ -299,7 +316,7 @@ const RandomRecommendation = () => {
                 value={filters.mood} 
                 onChange={(e) => handleFilterChange('mood', e.target.value)}
               >
-                {moodOptions.map(option => (
+                {filterOptions.moodOptions.map(option => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>

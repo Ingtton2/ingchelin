@@ -26,8 +26,8 @@ export const FavoriteProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      console.log('API 호출 시작:', `http://localhost:8081/api/favorites/user/${user.id}`);
-      const response = await fetch(`http://localhost:8081/api/favorites/user/${user.id}`);
+      console.log('API 호출 시작:', `http://localhost:8080/api/favorites/user/${user.id}`);
+      const response = await fetch(`http://localhost:8080/api/favorites/user/${user.id}`);
       console.log('즐겨찾기 목록 응답:', response.status, response.ok);
       
       if (response.ok) {
@@ -80,7 +80,7 @@ export const FavoriteProvider = ({ children }) => {
 
     try {
       console.log('즐겨찾기 추가 시작:', restaurant.id, '사용자:', user.id);
-      const response = await fetch('http://localhost:8081/api/favorites', {
+      const response = await fetch('http://localhost:8080/api/favorites', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,8 +132,8 @@ export const FavoriteProvider = ({ children }) => {
     }
 
     try {
-      console.log('백엔드 API 호출 시작:', `http://localhost:8081/api/favorites/user/${user.id}/restaurant/${restaurantId}`);
-      const response = await fetch(`http://localhost:8081/api/favorites/user/${user.id}/restaurant/${restaurantId}`, {
+      console.log('백엔드 API 호출 시작:', `http://localhost:8080/api/favorites/user/${user.id}/restaurant/${restaurantId}`);
+      const response = await fetch(`http://localhost:8080/api/favorites/user/${user.id}/restaurant/${restaurantId}`, {
         method: 'DELETE'
       });
 

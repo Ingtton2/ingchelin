@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd backend && ./mvnw spring-boot:run",
+    "startCommand": "cd backend && ./mvnw spring-boot:run -Dspring.profiles.active=prod",
     "healthcheckPath": "/api/restaurants",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",

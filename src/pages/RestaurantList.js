@@ -20,22 +20,15 @@ function RestaurantList() {
 
   const categories = ['all', '한식', '중식', '일식', '양식', '분식', '태국', '술', '카페', '디저트'];
 
-  // 사용자 평점 불러오기
+  // 사용자 평점 불러오기 (로컬 스토리지 사용)
   const loadUserRatings = async () => {
     if (!currentUser) return;
     
     try {
-      const response = await fetch(`http://localhost:8080/api/reviews/user/${currentUser.id}`);
-      if (response.ok) {
-        const reviews = await response.json();
-        const ratingsMap = {};
-        reviews.forEach(review => {
-          ratingsMap[review.restaurant.id] = {
-            ...ratingsMap[review.restaurant.id],
-            [currentUser.id]: review.rating
-          };
-        });
-        setUserRatings(ratingsMap);
+      // 로컬 스토리지에서 사용자 평점 불러오기
+      const savedRatings = localStorage.getItem('userRatings');
+      if (savedRatings) {
+        setUserRatings(JSON.parse(savedRatings));
       }
     } catch (error) {
       console.error('평점 불러오기 실패:', error);
@@ -55,24 +48,13 @@ function RestaurantList() {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8080/api/restaurants');
-        if (!response.ok) {
-          throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
-        }
-        const data = await response.json();
-        
-        // 방문 수 데이터 가져오기
-        const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
-        let visitCounts = {};
-        if (visitCountsResponse.ok) {
-          visitCounts = await visitCountsResponse.json();
-        }
+        const { data } = await restaurantAPI.getAll();
         
         const restaurantsWithExtraData = data.map(restaurant => ({
           ...restaurant,
           category: restaurant.cuisine, // cuisine을 category로 매핑
           location: { lat: restaurant.latitude, lng: restaurant.longitude }, // position을 location으로 매핑
-          totalRatings: visitCounts[restaurant.id] || 0, // 실제 방문 수 사용
+          totalRatings: 0, // 임시 데이터
           price: "2만원~5만원", // 임시 데이터
           hours: "11:00 - 22:00", // 임시 데이터
           userRatings: {}
@@ -116,7 +98,7 @@ function RestaurantList() {
     setPendingRating(null);
   };
 
-  // 사용자 평점 처리
+  // 사용자 평점 처리 (로컬 스토리지 사용)
   const handleRatingSubmit = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
@@ -124,54 +106,29 @@ function RestaurantList() {
     }
 
     try {
-      // 방문 기록 저장
-      const visitResponse = await fetch('http://localhost:8080/api/visits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          restaurantId: restaurantId,
-          visitDate: new Date().toISOString(),
-          rating: rating,
-          comment: `${rating}점 평가`
-        })
+      // 로컬 스토리지에 방문 기록 저장
+      const visits = JSON.parse(localStorage.getItem('visits') || '[]');
+      visits.push({
+        userId: currentUser.id,
+        restaurantId: restaurantId,
+        visitDate: new Date().toISOString(),
+        rating: rating,
+        comment: `${rating}점 평가`
       });
+      localStorage.setItem('visits', JSON.stringify(visits));
 
-      if (!visitResponse.ok) {
-        console.error('방문 기록 저장 실패:', visitResponse.status);
-      }
+      // 로컬 스토리지에 평점 저장
+      const newUserRatings = {
+        ...userRatings,
+        [restaurantId]: {
+          ...userRatings[restaurantId],
+          [currentUser.id]: rating
+        }
+      };
 
-      // 백엔드 API로 평점 저장
-      const response = await fetch('http://localhost:8080/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          restaurantId: restaurantId,
-          rating: rating,
-          comment: `${rating}점 평가`
-        })
-      });
-
-      if (response.ok) {
-        const newUserRatings = {
-          ...userRatings,
-          [restaurantId]: {
-            ...userRatings[restaurantId],
-            [currentUser.id]: rating
-          }
-        };
-
-        setUserRatings(newUserRatings);
-        localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
-        alert('평점과 방문 기록이 저장되었습니다! ⭐');
-      } else {
-        alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
-      }
+      setUserRatings(newUserRatings);
+      localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
+      alert('평점과 방문 기록이 저장되었습니다! ⭐');
     } catch (error) {
       console.error('평점 저장 중 오류:', error);
       alert('평점 저장 중 오류가 발생했습니다.');

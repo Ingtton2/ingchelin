@@ -17,6 +17,7 @@ com/restaurant/backend/controller/FavoriteController.class
 com/restaurant/backend/entity/Favorite.class
 com/restaurant/backend/controller/CoordinateController.class
 com/restaurant/backend/repository/VisitRepository.class
+com/restaurant/backend/config/WebConfig.class
 com/restaurant/backend/repository/FavoriteRepository.class
 com/restaurant/backend/repository/CategoryRepository.class
 com/restaurant/backend/RestaurantBackendApplication.class

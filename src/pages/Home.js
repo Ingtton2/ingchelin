@@ -15,48 +15,80 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 백엔드에서 레스토랑 데이터 가져오기
+  // 백엔드 서버 상태와 DB 연결 상태 확인 (랜딩페이지 로드 완료 후)
   useEffect(() => {
-    const fetchTopRestaurants = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('http://localhost:8080/api/restaurants');
-        if (!response.ok) {
-          throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
-        }
-        const data = await response.json();
-        
-        // 방문 수 데이터 가져오기
-        const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
-        let visitCounts = {};
-        if (visitCountsResponse.ok) {
-          visitCounts = await visitCountsResponse.json();
-        }
-        
-        // 평점이 높은 순으로 정렬하여 상위 3개 선택
-        const sortedRestaurants = data
-          .sort((a, b) => b.rating - a.rating)
-          .slice(0, 3)
-          .map(restaurant => ({
-            ...restaurant,
-            totalRatings: visitCounts[restaurant.id] || 0, // 실제 방문 수 사용
-            price: "2만원~5만원", // 임시 데이터
-            businessHours: "11:00 - 22:00", // 임시 데이터
-            position: { 
-              lat: restaurant.latitude || 37.5665, 
-              lng: restaurant.longitude || 126.9780 
+    // 페이지 로드 완료 후 2초 뒤에 상태 체크
+    const statusCheckTimer = setTimeout(async () => {
+      const checkServerStatus = async () => {
+        try {
+          // 백엔드 서버 상태 확인
+          const serverResponse = await fetch('http://localhost:8080/api/restaurants');
+          const isServerRunning = serverResponse.ok;
+          
+          // 데이터베이스 연결 상태 확인 (레스토랑 데이터가 있는지 확인)
+          let isDbConnected = false;
+          let restaurantCount = 0;
+          let restaurantData = [];
+          
+          if (isServerRunning) {
+            restaurantData = await serverResponse.json();
+            restaurantCount = restaurantData.length;
+            isDbConnected = restaurantCount > 0;
+          }
+          
+          // 상태 알림
+          let statusMessage = '';
+          if (isServerRunning && isDbConnected) {
+            statusMessage = `✅ 서버 상태: 정상\n✅ 데이터베이스 연결: 정상\n📊 레스토랑 데이터: ${restaurantCount}개`;
+          } else if (isServerRunning && !isDbConnected) {
+            statusMessage = `✅ 서버 상태: 정상\n❌ 데이터베이스 연결: 실패\n📊 레스토랑 데이터: ${restaurantCount}개`;
+          } else {
+            statusMessage = `❌ 서버 상태: 실패\n❌ 데이터베이스 연결: 실패\n📊 레스토랑 데이터: 0개`;
+          }
+          
+          alert(statusMessage);
+          
+          // 레스토랑 데이터 로드
+          if (isServerRunning && restaurantData.length > 0) {
+            // 방문 수 데이터 가져오기
+            const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
+            let visitCounts = {};
+            if (visitCountsResponse.ok) {
+              visitCounts = await visitCountsResponse.json();
             }
-          }));
-        setTopRestaurants(sortedRestaurants);
-      } catch (err) {
-        console.error('Failed to fetch restaurants:', err);
-        setError('레스토랑 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
+            
+            // 평점이 높은 순으로 정렬하여 상위 3개 선택
+            const sortedRestaurants = restaurantData
+              .sort((a, b) => b.rating - a.rating)
+              .slice(0, 3)
+              .map(restaurant => ({
+                ...restaurant,
+                totalRatings: visitCounts[restaurant.id] || 0,
+                price: "2만원~5만원",
+                businessHours: "11:00 - 22:00",
+                position: { 
+                  lat: restaurant.latitude || 37.5665, 
+                  lng: restaurant.longitude || 126.9780 
+                }
+              }));
+            setTopRestaurants(sortedRestaurants);
+          } else {
+            setError('서버에 연결할 수 없습니다.');
+          }
+        } catch (err) {
+          console.error('Failed to check server status:', err);
+          alert('❌ 서버 상태 확인 실패\n❌ 데이터베이스 연결: 확인 불가\n📊 레스토랑 데이터: 0개');
+          setError('서버에 연결할 수 없습니다.');
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchTopRestaurants();
+      checkServerStatus();
+    }, 2000); // 2초 후 실행
+
+    // 컴포넌트 언마운트 시 타이머 정리
+    return () => clearTimeout(statusCheckTimer);
   }, []);
 
   const features = [

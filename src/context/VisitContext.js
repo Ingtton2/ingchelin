@@ -22,17 +22,21 @@ export const VisitProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8080/api/visits/user/${user.id}`);
-      if (response.ok) {
-        const visits = await response.json();
+      // 로컬 스토리지에서 방문 기록 불러오기
+      const savedVisits = localStorage.getItem(`visits_${user.id}`);
+      if (savedVisits) {
+        const visits = JSON.parse(savedVisits);
         const statusMap = {};
         visits.forEach(visit => {
-          statusMap[visit.restaurant.id] = visit.rating >= 4 ? 'liked' : 'disliked';
+          statusMap[visit.restaurantId] = visit.rating >= 4 ? 'liked' : 'disliked';
         });
         setVisitStatus(statusMap);
+      } else {
+        setVisitStatus({});
       }
     } catch (error) {
       console.error('방문 기록 불러오기 실패:', error);
+      setVisitStatus({});
     } finally {
       setLoading(false);
     }
@@ -47,7 +51,7 @@ export const VisitProvider = ({ children }) => {
     }
   }, [user]);
 
-  // 방문 상태 설정 (백엔드에 저장)
+  // 방문 상태 설정 (로컬 스토리지에 저장)
   const setRestaurantVisitStatus = async (restaurantId, status) => {
     if (!user) {
       alert('로그인이 필요합니다.');
@@ -57,27 +61,31 @@ export const VisitProvider = ({ children }) => {
     try {
       const rating = status === 'liked' ? 5 : 2; // 좋아함: 5점, 싫어함: 2점
       
-      const response = await fetch('http://localhost:8080/api/visits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          restaurantId: restaurantId,
-          rating: rating,
-          review: status === 'liked' ? '좋아요!' : '별로예요.'
-        })
-      });
-
-      if (response.ok) {
-        setVisitStatus(prev => ({
-          ...prev,
-          [restaurantId]: status
-        }));
+      // 로컬 스토리지에 방문 기록 저장
+      const savedVisits = JSON.parse(localStorage.getItem(`visits_${user.id}`) || '[]');
+      const newVisit = {
+        userId: user.id,
+        restaurantId: restaurantId,
+        rating: rating,
+        review: status === 'liked' ? '좋아요!' : '별로예요.',
+        visitDate: new Date().toISOString()
+      };
+      
+      // 기존 방문 기록이 있으면 업데이트, 없으면 추가
+      const existingIndex = savedVisits.findIndex(visit => visit.restaurantId === restaurantId);
+      if (existingIndex >= 0) {
+        savedVisits[existingIndex] = newVisit;
       } else {
-        console.error('방문 기록 저장 실패');
+        savedVisits.push(newVisit);
       }
+      
+      localStorage.setItem(`visits_${user.id}`, JSON.stringify(savedVisits));
+      
+      // 상태 업데이트
+      setVisitStatus(prev => ({
+        ...prev,
+        [restaurantId]: status
+      }));
     } catch (error) {
       console.error('방문 기록 저장 중 오류:', error);
     }

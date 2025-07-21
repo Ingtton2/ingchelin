@@ -26,28 +26,20 @@ export const FavoriteProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      console.log('API 호출 시작:', `http://localhost:8080/api/favorites/user/${user.id}`);
-      const response = await fetch(`http://localhost:8080/api/favorites/user/${user.id}`);
-      console.log('즐겨찾기 목록 응답:', response.status, response.ok);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('즐겨찾기 목록 데이터:', data);
-        console.log('데이터 길이:', data.length);
-        
-        const restaurants = data.map(fav => fav.restaurant);
-        console.log('매핑된 레스토랑 목록:', restaurants);
+      // 로컬 스토리지에서 즐겨찾기 불러오기
+      const savedFavorites = localStorage.getItem(`favorites_${user.id}`);
+      if (savedFavorites) {
+        const restaurants = JSON.parse(savedFavorites);
+        console.log('로컬 즐겨찾기 목록:', restaurants);
         console.log('레스토랑 개수:', restaurants.length);
-        
         setFavorites(restaurants);
-        console.log('즐겨찾기 상태 업데이트 완료, 개수:', restaurants.length);
       } else {
-        console.error('즐겨찾기 목록 불러오기 실패:', response.status);
-        const errorText = await response.text();
-        console.error('에러 상세:', errorText);
+        console.log('저장된 즐겨찾기 없음');
+        setFavorites([]);
       }
     } catch (error) {
       console.error('즐겨찾기 목록 불러오기 실패:', error);
+      setFavorites([]);
     } finally {
       setLoading(false);
     }
@@ -80,46 +72,19 @@ export const FavoriteProvider = ({ children }) => {
 
     try {
       console.log('즐겨찾기 추가 시작:', restaurant.id, '사용자:', user.id);
-      const response = await fetch('http://localhost:8080/api/favorites', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          restaurantId: restaurant.id
-        })
-      });
-
-      console.log('백엔드 응답:', response.status, response.ok);
-      if (response.ok) {
-        try {
-          // 백엔드 응답에서 실제 추가된 데이터 가져오기
-          const addedFavorite = await response.json();
-          console.log('백엔드 응답 데이터:', addedFavorite);
-          console.log('추가된 레스토랑 정보:', addedFavorite.restaurant);
-          
-          // 상태 즉시 업데이트 - 백엔드에서 반환한 restaurant 정보 사용
-          setFavorites(prev => {
-            const newFavorites = [...prev, addedFavorite.restaurant];
-            console.log('즐겨찾기 상태 업데이트:', prev.length, '->', newFavorites.length);
-            return newFavorites;
-          });
-          console.log('즐겨찾기 추가 성공:', restaurant.id);
-          alert('찜 목록에 추가되었습니다! 🎉');
-        } catch (parseError) {
-          console.error('JSON 파싱 오류:', parseError);
-          alert('응답 처리 중 오류가 발생했습니다.');
-        }
-      } else {
-        console.error('즐겨찾기 추가 실패:', response.status);
-        const errorText = await response.text();
-        console.error('에러 상세:', errorText);
-        alert('찜 목록에 추가하는데 실패했습니다. 다시 시도해주세요.');
-      }
+      
+      // 로컬 스토리지에 즐겨찾기 추가
+      const newFavorites = [...favorites, restaurant];
+      setFavorites(newFavorites);
+      
+      // 로컬 스토리지에 저장
+      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
+      
+      console.log('즐겨찾기 추가 성공:', restaurant.id);
+      alert('찜 목록에 추가되었습니다! 🎉');
     } catch (error) {
       console.error('즐겨찾기 추가 중 오류:', error);
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('즐겨찾기 추가 중 오류가 발생했습니다.');
     }
   };
 
@@ -132,32 +97,20 @@ export const FavoriteProvider = ({ children }) => {
     }
 
     try {
-      console.log('백엔드 API 호출 시작:', `http://localhost:8080/api/favorites/user/${user.id}/restaurant/${restaurantId}`);
-      const response = await fetch(`http://localhost:8080/api/favorites/user/${user.id}/restaurant/${restaurantId}`, {
-        method: 'DELETE'
-      });
-
-      console.log('백엔드 응답:', response.status, response.ok);
-      if (response.ok) {
-        // 상태 즉시 업데이트 - restaurantId로 필터링
-        setFavorites(prev => {
-          const newFavorites = prev.filter(fav => fav.id !== restaurantId);
-          console.log('즐겨찾기 상태 업데이트:', prev.length, '->', newFavorites.length);
-          return newFavorites;
-        });
-        console.log('즐겨찾기 제거 성공:', restaurantId);
-        
-        // 성공 메시지 표시
-        alert('찜 목록에서 제거되었습니다! ❌');
-      } else {
-        console.error('즐겨찾기 제거 실패:', response.status);
-        const errorText = await response.text();
-        console.error('에러 상세:', errorText);
-        alert('찜 목록에서 제거하는데 실패했습니다. 다시 시도해주세요.');
-      }
+      console.log('즐겨찾기 제거 시작:', restaurantId, '사용자:', user.id);
+      
+      // 상태 즉시 업데이트 - restaurantId로 필터링
+      const newFavorites = favorites.filter(fav => fav.id !== restaurantId);
+      setFavorites(newFavorites);
+      
+      // 로컬 스토리지에 저장
+      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
+      
+      console.log('즐겨찾기 제거 성공:', restaurantId);
+      alert('찜 목록에서 제거되었습니다! ❌');
     } catch (error) {
       console.error('즐겨찾기 제거 중 오류:', error);
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('즐겨찾기 제거 중 오류가 발생했습니다.');
     }
   };
 

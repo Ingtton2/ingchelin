@@ -1,15 +1,75 @@
 import { supabase } from './supabase';
+import { restaurantData } from '../data/restaurantData';
 
 // 레스토랑 관련 API
 export const restaurantAPI = {
-  // 모든 레스토랑 조회
+    // 모든 레스토랑 조회
   getAll: async () => {
-    const { data, error } = await supabase
-      .from('restaurants')
-      .select('*');
-    
-    if (error) throw error;
-    return { data };
+    try {
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*');
+      
+      if (error) {
+        console.warn('Supabase 연결 실패, 기본 데이터 사용:', error);
+        // 기본 데이터 반환
+        return { 
+          data: restaurantData.map(restaurant => ({
+            id: restaurant.id,
+            name: restaurant.name,
+            cuisine: restaurant.category,
+            rating: restaurant.rating,
+            address: restaurant.address,
+            description: restaurant.description,
+            latitude: restaurant.position.lat,
+            longitude: restaurant.position.lng,
+            phone: restaurant.phone,
+            parking: restaurant.parking,
+            businessHours: restaurant.hours
+          }))
+        };
+      }
+      
+      // Supabase 데이터가 있으면 사용, 없으면 기본 데이터 사용
+      if (data && data.length > 0) {
+        console.log('Supabase 데이터 사용:', data.length, '개 레스토랑');
+        return { data: data };
+      } else {
+        console.log('Supabase 데이터 없음, 기본 데이터 사용');
+        return { 
+          data: restaurantData.map(restaurant => ({
+            id: restaurant.id,
+            name: restaurant.name,
+            cuisine: restaurant.category,
+            rating: restaurant.rating,
+            address: restaurant.address,
+            description: restaurant.description,
+            latitude: restaurant.position.lat,
+            longitude: restaurant.position.lng,
+            phone: restaurant.phone,
+            parking: restaurant.parking,
+            businessHours: restaurant.hours
+          }))
+        };
+      }
+    } catch (error) {
+      console.warn('API 호출 실패, 기본 데이터 사용:', error);
+      return { 
+        data: restaurantData.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          cuisine: restaurant.category,
+          rating: restaurant.rating,
+          address: restaurant.address,
+          description: restaurant.description,
+          latitude: restaurant.position.lat,
+          longitude: restaurant.position.lng,
+          phone: restaurant.phone,
+          parking: restaurant.parking,
+          businessHours: restaurant.hours
+        }))
+      };
+    }
   },
   
   // ID로 레스토랑 조회

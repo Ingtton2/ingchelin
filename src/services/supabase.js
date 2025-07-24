@@ -1,13 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://ddhrabdtbwzdmukbkixo.supabase.co';
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkaHJhYmR0Ynd6ZG11a2JraXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNjE4NTcsImV4cCI6MjA2ODYzNzg1N30.Z5QGluZn2yTPzkqNgklAKkegrPKaVrcAlu3eczMSISo';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase 환경변수가 설정되지 않았습니다.');
-}
+// 실제 Supabase 클라이언트 생성
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export { supabase };
 
 // Supabase를 통한 직접 데이터 접근 (백엔드 없이 사용 가능)
 export const supabaseAPI = {

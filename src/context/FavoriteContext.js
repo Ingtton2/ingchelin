@@ -81,20 +81,37 @@ export const FavoriteProvider = ({ children }) => {
     }
 
     try {
-      console.log('즐겨찾기 추가 시작:', restaurant.id, '사용자:', user.id);
+      console.log('즐겨찾기 추가 시작:', { 
+        restaurantId: restaurant.id, 
+        userId: user.id,
+        restaurantIdType: typeof restaurant.id,
+        userIdType: typeof user.id
+      });
+      
+      // 데이터 타입 확인 및 변환
+      const userId = parseInt(user.id);
+      const restaurantId = parseInt(restaurant.id);
+
+      if (isNaN(userId) || isNaN(restaurantId)) {
+        console.error('데이터 타입 오류:', { userId, restaurantId });
+        alert('데이터 형식이 올바르지 않습니다.');
+        return;
+      }
+
+      console.log('변환된 데이터:', { userId, restaurantId });
       
       // Supabase에 찜하기 저장
       const { error } = await supabase
         .from('favorites')
         .insert({
-          user_id: user.id,
-          restaurant_id: restaurant.id,
+          user_id: userId,
+          restaurant_id: restaurantId,
           created_at: new Date().toISOString()
         });
       
       if (error) {
         console.error('Supabase 찜하기 저장 실패:', error);
-        alert('찜하기 저장에 실패했습니다.');
+        alert(`찜하기 저장에 실패했습니다: ${error.message}`);
         return;
       }
       
@@ -105,8 +122,8 @@ export const FavoriteProvider = ({ children }) => {
       console.log('즐겨찾기 추가 성공:', restaurant.id);
       alert('찜 목록에 추가되었습니다! 🎉');
     } catch (error) {
-      console.error('즐겨찾기 추가 중 오류:', error);
-      alert('즐겨찾기 추가 중 오류가 발생했습니다.');
+      console.error('즐겨찾기 추가 중 예상치 못한 오류:', error);
+      alert(`즐겨찾기 추가 중 오류가 발생했습니다: ${error.message}`);
     }
   };
 
@@ -119,18 +136,35 @@ export const FavoriteProvider = ({ children }) => {
     }
 
     try {
-      console.log('즐겨찾기 제거 시작:', restaurantId, '사용자:', user.id);
+      console.log('즐겨찾기 제거 시작:', { 
+        restaurantId: restaurantId, 
+        userId: user.id,
+        restaurantIdType: typeof restaurantId,
+        userIdType: typeof user.id
+      });
+      
+      // 데이터 타입 확인 및 변환
+      const userId = parseInt(user.id);
+      const restaurantIdInt = parseInt(restaurantId);
+
+      if (isNaN(userId) || isNaN(restaurantIdInt)) {
+        console.error('데이터 타입 오류:', { userId, restaurantIdInt });
+        alert('데이터 형식이 올바르지 않습니다.');
+        return;
+      }
+
+      console.log('변환된 데이터:', { userId, restaurantIdInt });
       
       // Supabase에서 찜하기 삭제
       const { error } = await supabase
         .from('favorites')
         .delete()
-        .eq('user_id', user.id)
-        .eq('restaurant_id', restaurantId);
+        .eq('user_id', userId)
+        .eq('restaurant_id', restaurantIdInt);
       
       if (error) {
         console.error('Supabase 찜하기 삭제 실패:', error);
-        alert('찜하기 삭제에 실패했습니다.');
+        alert(`찜하기 삭제에 실패했습니다: ${error.message}`);
         return;
       }
       
@@ -141,8 +175,8 @@ export const FavoriteProvider = ({ children }) => {
       console.log('즐겨찾기 제거 성공:', restaurantId);
       alert('찜 목록에서 제거되었습니다! ❌');
     } catch (error) {
-      console.error('즐겨찾기 제거 중 오류:', error);
-      alert('즐겨찾기 제거 중 오류가 발생했습니다.');
+      console.error('즐겨찾기 제거 중 예상치 못한 오류:', error);
+      alert(`즐겨찾기 제거 중 오류가 발생했습니다: ${error.message}`);
     }
   };
 

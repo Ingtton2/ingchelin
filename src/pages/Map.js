@@ -391,20 +391,27 @@ function KakaoMap() {
 
   // 카카오맵 초기화 함수
   const initKakaoMap = () => {
+    console.log('🔍 카카오맵 초기화 시작');
+    console.log('📍 현재 URL:', window.location.href);
+    console.log('🌐 카카오맵 API 키:', process.env.REACT_APP_KAKAO_MAP_API_KEY ? '설정됨' : '설정되지 않음');
+    
     // 카카오맵 API 로드 확인
     if (window.kakao && window.kakao.maps) {
+      console.log('✅ 카카오맵 API 로드됨');
       const container = document.getElementById('map');
       if (!container) {
-        console.error('지도 컨테이너를 찾을 수 없습니다.');
+        console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
         return;
       }
+      console.log('✅ 지도 컨테이너 찾음');
 
       // 사용자 위치 가져오기
       if (navigator.geolocation) {
+        console.log('📍 위치 정보 요청 시작');
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            console.log('사용자 위치:', latitude, longitude);
+            console.log('✅ 사용자 위치 획득:', latitude, longitude);
             
             try {
               // 사용자 위치로 지도 초기화
@@ -430,15 +437,15 @@ function KakaoMap() {
               userMarker.setMap(map);
               setUserMarker(userMarker);
               
-              console.log('카카오맵 초기화 완료 (사용자 위치 기반)');
+              console.log('🎉 카카오맵 초기화 완료 (사용자 위치 기반)');
             } catch (error) {
-              console.error('카카오맵 초기화 오류:', error);
+              console.error('❌ 카카오맵 초기화 오류:', error);
               // 에러 발생 시 기본 위치로 초기화
               initKakaoMapWithDefaultLocation();
             }
           },
           (error) => {
-            console.log('위치 정보를 가져올 수 없습니다:', error);
+            console.log('❌ 위치 정보를 가져올 수 없습니다:', error);
             // 위치 정보를 가져올 수 없으면 기본 위치로 초기화
             initKakaoMapWithDefaultLocation();
           },
@@ -449,11 +456,13 @@ function KakaoMap() {
           }
         );
       } else {
+        console.log('❌ 위치 정보를 지원하지 않습니다');
         // 위치 정보를 지원하지 않으면 기본 위치로 초기화
         initKakaoMapWithDefaultLocation();
       }
     } else {
-      console.error('카카오맵 API가 로드되지 않았습니다.');
+      console.error('❌ 카카오맵 API가 로드되지 않았습니다.');
+      console.log('🔄 1초 후 재시도...');
       // 1초 후 다시 시도
       setTimeout(initKakaoMap, 1000);
     }
@@ -461,10 +470,11 @@ function KakaoMap() {
 
   // 기본 위치로 지도 초기화하는 함수
   const initKakaoMapWithDefaultLocation = () => {
+    console.log('📍 기본 위치로 지도 초기화 시작');
     try {
       const container = document.getElementById('map');
       if (!container) {
-        console.error('지도 컨테이너를 찾을 수 없습니다.');
+        console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
         return;
       }
 
@@ -477,9 +487,9 @@ function KakaoMap() {
       setMapInstance(map);
       setMapLoaded(true);
       
-      console.log('카카오맵 초기화 완료 (기본 위치)');
+      console.log('✅ 카카오맵 초기화 완료 (기본 위치)');
     } catch (error) {
-      console.error('카카오맵 기본 위치 초기화 오류:', error);
+      console.error('❌ 카카오맵 기본 위치 초기화 오류:', error);
       // 최종 폴백: 지도 컨테이너에 에러 메시지 표시
       const container = document.getElementById('map');
       if (container) {
@@ -488,7 +498,7 @@ function KakaoMap() {
             <div style="text-align: center;">
               <h3>🗺️ 지도를 불러올 수 없습니다</h3>
               <p>카카오맵 API 연결에 문제가 있습니다.</p>
-              <p>잠시 후 다시 시도해주세요.</p>
+              <p>Vercel 환경에서 API 키 설정을 확인해주세요.</p>
               <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
                 새로고침
               </button>

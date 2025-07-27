@@ -3,6 +3,8 @@ import { useFavorites } from '../context/FavoriteContext';
 import { useVisit } from '../context/VisitContext';
 import { useSearchParams } from 'react-router-dom';
 import RestaurantDetailModal from '../components/RestaurantDetailModal';
+import { supabase } from '../services/supabase';
+import { restaurantData } from '../data/restaurantData';
 import './Map.css';
 
 function KakaoMap() {
@@ -39,8 +41,6 @@ function KakaoMap() {
   // 상세정보 모달 상태 추가
   const [detailModal, setDetailModal] = useState(null);
 
-
-
   // 드래그 이벤트 핸들러
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -74,96 +74,98 @@ function KakaoMap() {
     { value: 'not-visited', label: '안 가본 곳', color: '#FF6B6B', icon: '❓' }
   ];
 
-  // 실제 데이터베이스에서 레스토랑 데이터 가져오기
+  // Supabase에서 레스토랑 데이터 가져오기
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/restaurants');
-      if (response.ok) {
-        const data = await response.json();
-        // 데이터베이스 데이터를 지도 형식에 맞게 변환
+      // Supabase에서 레스토랑 데이터 가져오기
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*');
+      
+      if (error) {
+        console.warn('Supabase 연결 실패, 기본 데이터 사용:', error);
+        // 기본 데이터 반환
+        const defaultData = restaurantData.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          category: restaurant.category,
+          rating: restaurant.rating,
+          address: restaurant.address,
+          description: restaurant.description,
+          price: restaurant.price || "1만원~3만원",
+          position: { 
+            lat: restaurant.position.lat, 
+            lng: restaurant.position.lng 
+          },
+          businessHours: restaurant.hours || "11:00 - 22:00",
+          phone: restaurant.phone || "02-0000-0000",
+          parking: restaurant.parking || "주차 가능"
+        }));
+        setRestaurants(defaultData);
+        setFilteredRestaurants(defaultData);
+        return;
+      }
+      
+      // Supabase 데이터가 있으면 사용, 없으면 기본 데이터 사용
+      if (data && data.length > 0) {
+        console.log('Supabase 데이터 사용:', data.length, '개 레스토랑');
         const formattedData = data.map(restaurant => ({
           id: restaurant.id,
           name: restaurant.name,
-          category: restaurant.cuisine,
+          category: restaurant.cuisine || restaurant.category,
           rating: restaurant.rating || 4.0,
           address: restaurant.address,
-          description: restaurant.description || `${restaurant.cuisine} 전문점입니다.`,
+          description: restaurant.description || `${restaurant.cuisine || restaurant.category} 전문점입니다.`,
           price: restaurant.price || "1만원~3만원",
           position: { 
             lat: restaurant.latitude || 37.5665, 
             lng: restaurant.longitude || 126.9780 
           },
-          hours: restaurant.businessHours || "11:00 - 22:00",
+          businessHours: restaurant.businessHours || "11:00 - 22:00",
           phone: restaurant.phone || "02-0000-0000",
-          parking: restaurant.parking || "주차 가능"
+          parking: restaurant.parking ? "주차 가능" : "주차 불가"
         }));
         setRestaurants(formattedData);
         setFilteredRestaurants(formattedData);
       } else {
-        console.error('레스토랑 데이터를 가져오는데 실패했습니다. 기본 데이터를 사용합니다.');
-        // 실패 시 기본 샘플 데이터 사용
-        const defaultData = [
-          {
-            id: 1,
-            name: "맛있는 한식집",
-            category: "한식",
-            rating: 4.5,
-            address: "서울시 강남구 테헤란로 123",
-            description: "전통 한식 전문점입니다.",
-            price: "1만원~3만원",
-            position: { lat: 37.5665, lng: 126.9780 },
-            hours: "11:00 - 22:00",
-            phone: "02-1234-5678",
-            parking: "주차 가능"
+        console.log('Supabase 데이터 없음, 기본 데이터 사용');
+        const defaultData = restaurantData.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          category: restaurant.category,
+          rating: restaurant.rating,
+          address: restaurant.address,
+          description: restaurant.description,
+          price: restaurant.price || "1만원~3만원",
+          position: { 
+            lat: restaurant.position.lat, 
+            lng: restaurant.position.lng 
           },
-          {
-            id: 2,
-            name: "신선한 일식집",
-            category: "일식",
-            rating: 4.3,
-            address: "서울시 강남구 역삼동 456",
-            description: "신선한 회와 초밥 전문점입니다.",
-            price: "2만원~5만원",
-            position: { lat: 37.5668, lng: 126.9785 },
-            hours: "11:30 - 22:30",
-            phone: "02-2345-6789",
-            parking: "주차 불가"
-          }
-        ];
+          businessHours: restaurant.hours || "11:00 - 22:00",
+          phone: restaurant.phone || "02-0000-0000",
+          parking: restaurant.parking || "주차 가능"
+        }));
         setRestaurants(defaultData);
         setFilteredRestaurants(defaultData);
       }
     } catch (error) {
-      console.error('레스토랑 데이터를 가져오는 중 오류 발생:', error);
-      // 에러 시에도 기본 데이터 사용
-      const defaultData = [
-        {
-          id: 1,
-          name: "맛있는 한식집",
-          category: "한식",
-          rating: 4.5,
-          address: "서울시 강남구 테헤란로 123",
-          description: "전통 한식 전문점입니다.",
-          price: "1만원~3만원",
-          position: { lat: 37.5665, lng: 126.9780 },
-          hours: "11:00 - 22:00",
-          phone: "02-1234-5678",
-          parking: "주차 가능"
+      console.warn('API 호출 실패, 기본 데이터 사용:', error);
+      const defaultData = restaurantData.map(restaurant => ({
+        id: restaurant.id,
+        name: restaurant.name,
+        category: restaurant.category,
+        rating: restaurant.rating,
+        address: restaurant.address,
+        description: restaurant.description,
+        price: restaurant.price || "1만원~3만원",
+        position: { 
+          lat: restaurant.position.lat, 
+          lng: restaurant.position.lng 
         },
-        {
-          id: 2,
-          name: "신선한 일식집",
-          category: "일식",
-          rating: 4.3,
-          address: "서울시 강남구 역삼동 456",
-          description: "신선한 회와 초밥 전문점입니다.",
-          price: "2만원~5만원",
-          position: { lat: 37.5668, lng: 126.9785 },
-          hours: "11:30 - 22:30",
-          phone: "02-2345-6789",
-          parking: "주차 불가"
-        }
-      ];
+        businessHours: restaurant.hours || "11:00 - 22:00",
+        phone: restaurant.phone || "02-0000-0000",
+        parking: restaurant.parking || "주차 가능"
+      }));
       setRestaurants(defaultData);
       setFilteredRestaurants(defaultData);
     }
@@ -387,92 +389,91 @@ function KakaoMap() {
     setSelectedMarkerStatus(selectedMarkerStatus.length === markerStatusOptions.length ? [] : markerStatusOptions.map(option => option.value));
   };
 
-  useEffect(() => {
-    // 실제 데이터베이스에서 레스토랑 데이터 가져오기
-    fetchRestaurants();
+  // 카카오맵 초기화 함수
+  const initKakaoMap = () => {
+    if (window.kakao && window.kakao.maps) {
+      const container = document.getElementById('map');
+      if (!container) {
+        console.error('지도 컨테이너를 찾을 수 없습니다.');
+        return;
+      }
 
-    // URL 파라미터 확인
-    const restaurantId = searchParams.get('restaurantId');
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
-
-    // 사용자 위치 가져오기
-    const getUserLocationForMap = () => {
+      // 사용자 위치 가져오기
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            const newUserLocation = { lat: latitude, lng: longitude };
-            setUserLocation(newUserLocation);
+            console.log('사용자 위치:', latitude, longitude);
             
             // 사용자 위치로 지도 초기화
-            initKakaoMapWithLocation(latitude, longitude);
+            const options = {
+              center: new window.kakao.maps.LatLng(latitude, longitude),
+              level: 6
+            };
+            
+            const map = new window.kakao.maps.Map(container, options);
+            setMapInstance(map);
+            setMapLoaded(true);
+            setUserLocation({ lat: latitude, lng: longitude });
+            
+            // 사용자 위치 마커 추가
+            const userMarker = new window.kakao.maps.Marker({
+              position: new window.kakao.maps.LatLng(latitude, longitude),
+              image: new window.kakao.maps.MarkerImage(
+                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgMjBDNy41OSAyMCA0IDE2LjQxIDQgMTJDNCA3LjU5IDcuNTkgNCAxMiA0QzE2LjQxIDQgMjAgNy41OSAyMCAxMkMyMCAxNi40MSAxNi40MSAyMCAxMiAyMFoiIGZpbGw9IiM2Njc5ZWEiLz4KPHBhdGggZD0iTTEyIDZDNi40OCA2IDIgMTAuNDggMiAxNkMyIDIxLjUyIDYuNDggMjYgMTIgMjZDNy41OSAyNiA0IDIyLjQxIDQgMThDNCAxMy41OSA3LjU5IDEwIDEyIDEwQzE2LjQxIDEwIDIwIDEzLjU5IDIwIDE4QzIwIDIyLjQxIDE2LjQxIDI2IDEyIDI2WiIgZmlsbD0iIzY2NzllYSIvPgo8L3N2Zz4K',
+                new window.kakao.maps.Size(30, 30)
+              )
+            });
+            
+            userMarker.setMap(map);
+            setUserMarker(userMarker);
+            
+            console.log('카카오맵 초기화 완료 (사용자 위치 기반)');
           },
           (error) => {
             console.log('위치 정보를 가져올 수 없습니다:', error);
             // 위치 정보를 가져올 수 없으면 기본 위치로 초기화
-            initKakaoMapWithLocation();
+            const options = {
+              center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+              level: 6
+            };
+            
+            const map = new window.kakao.maps.Map(container, options);
+            setMapInstance(map);
+            setMapLoaded(true);
+            
+            console.log('카카오맵 초기화 완료 (기본 위치)');
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000 // 5분
           }
         );
       } else {
         // 위치 정보를 지원하지 않으면 기본 위치로 초기화
-        initKakaoMapWithLocation();
-      }
-    };
-
-    // 카카오맵 초기화 (위치 정보 포함)
-    const initKakaoMapWithLocation = (userLat = null, userLng = null) => {
-      if (window.kakao && window.kakao.maps) {
-        const container = document.getElementById('map');
-        
-        // 우선순위: URL 파라미터 > 사용자 위치 > 기본 위치
-        let centerLat, centerLng;
-        if (lat && lng) {
-          centerLat = parseFloat(lat);
-          centerLng = parseFloat(lng);
-        } else if (userLat && userLng) {
-          centerLat = userLat;
-          centerLng = userLng;
-        } else {
-          centerLat = 37.3520; // 정자동 중심
-          centerLng = 127.1087;
-        }
-        
         const options = {
-          center: new window.kakao.maps.LatLng(centerLat, centerLng),
-          level: restaurantId ? 3 : 6
+          center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+          level: 6
         };
         
         const map = new window.kakao.maps.Map(container, options);
         setMapInstance(map);
         setMapLoaded(true);
         
-        // 초기 마커 설정 (전체 레스토랑)
-        updateMapMarkers(restaurants);
-
-        // 사용자 위치 마커 추가
-        if (userLat && userLng) {
-          const userMarker = new window.kakao.maps.Marker({
-            position: new window.kakao.maps.LatLng(userLat, userLng),
-            image: new window.kakao.maps.MarkerImage(
-              'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgMjBDNy41OSAyMCA0IDE2LjQxIDQgMTJDNCA3LjU5IDcuNTkgNCAxMiA0QzE2LjQxIDQgMjAgNy41OSAyMCAxMkMyMCAxNi40MSAxNi40MSAyMCAxMiAyMFoiIGZpbGw9IiM2Njc5ZWEiLz4KPHBhdGggZD0iTTEyIDZDNi40OCA2IDIgMTAuNDggMiAxNkMyIDIxLjUyIDYuNDggMjYgMTIgMjZDNy41OSAyNiA0IDIyLjQxIDQgMThDNCAxMy41OSA3LjU5IDEwIDEyIDEwQzE2LjQxIDEwIDIwIDEzLjU5IDIwIDE4QzIwIDIyLjQxIDE2LjQxIDI2IDEyIDI2WiIgZmlsbD0iIzY2NzllYSIvPgo8L3N2Zz4K',
-              new window.kakao.maps.Size(30, 30)
-            )
-          });
-          
-          userMarker.setMap(map);
-          setUserMarker(userMarker);
-        }
-      } else {
-        // 카카오맵 API가 로드되지 않았으면 1초 후 다시 시도
-        setTimeout(() => initKakaoMapWithLocation(userLat, userLng), 1000);
+        console.log('카카오맵 초기화 완료 (기본 위치)');
       }
-    };
+    } else {
+      console.error('카카오맵 API가 로드되지 않았습니다.');
+      // 1초 후 다시 시도
+      setTimeout(initKakaoMap, 1000);
+    }
+  };
 
-    // 페이지 로드 후 사용자 위치 가져오기 및 지도 초기화
-    const timer = setTimeout(getUserLocationForMap, 1000);
-    
-    return () => clearTimeout(timer);
+  // 컴포넌트 마운트 시 지도 초기화
+  useEffect(() => {
+    // 지도 초기화
+    initKakaoMap();
   }, []);
 
   // 두 지점 간의 거리 계산 (하버사인 공식)
@@ -697,8 +698,6 @@ function KakaoMap() {
             ))}
           </div>
           
-
-
           {/* 선택된 맛집 정보 */}
           {selectedRestaurant && (
             <div className="selected-restaurant-info">

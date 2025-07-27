@@ -185,24 +185,10 @@ function KakaoMap() {
       selectedCategories.includes(restaurant.category)
     );
     
-    // 마커 상태 필터링
-    filtered = filtered.filter(restaurant => {
-      if (isInFavorites(restaurant.id)) {
-        return selectedMarkerStatus.includes('favorited');
-      } else {
-        const visitStatus = getRestaurantVisitStatus(restaurant.id);
-        if (visitStatus === 'liked') {
-          return selectedMarkerStatus.includes('liked');
-        } else if (visitStatus === 'disliked') {
-          return selectedMarkerStatus.includes('disliked');
-        } else {
-          return selectedMarkerStatus.includes('not-visited');
-        }
-      }
-    });
+
     
     setFilteredRestaurants(filtered);
-  }, [restaurants, searchQuery, selectedCategories, selectedMarkerStatus]);
+  }, [restaurants, searchQuery, selectedCategories]);
 
   // 마커 업데이트 함수
   const updateMapMarkers = (restaurantsToShow) => {

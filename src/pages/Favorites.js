@@ -119,35 +119,85 @@ function Favorites() {
     console.log('평점 저장 시도:', { currentUser, restaurantId, rating });
 
     try {
-      // Supabase에 방문 기록 저장
-      const { error: visitError } = await supabase
-        .from('visits')
-        .insert({
-          user_id: currentUser.id,
-          restaurant_id: restaurantId,
-          visit_date: new Date().toISOString(),
-          rating: rating,
-          comment: `${rating}점 평가`
-        });
+      // 기존 리뷰가 있는지 확인
+      const { data: existingReview, error: checkError } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .eq('restaurant_id', restaurantId)
+        .single();
 
-      if (visitError) {
-        console.error('방문 기록 저장 실패:', visitError);
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('기존 리뷰 확인 실패:', checkError);
       }
 
-      // Supabase에 리뷰 저장
-      const { error: reviewError } = await supabase
-        .from('reviews')
-        .insert({
-          user_id: currentUser.id,
-          restaurant_id: restaurantId,
-          rating: rating,
-          comment: `${rating}점 평가`
-        });
+      // 기존 리뷰가 있으면 업데이트, 없으면 새로 생성
+      let reviewResult;
+      if (existingReview) {
+        // 기존 리뷰 업데이트
+        const { error: updateError } = await supabase
+          .from('reviews')
+          .update({
+            rating: rating,
+            comment: `${rating}점 평가`,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', currentUser.id)
+          .eq('restaurant_id', restaurantId);
 
-      if (reviewError) {
-        console.error('리뷰 저장 실패:', reviewError);
-        alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
-        return;
+        if (updateError) {
+          console.error('리뷰 업데이트 실패:', updateError);
+          alert('평점 업데이트에 실패했습니다. 다시 시도해주세요.');
+          return;
+        }
+        console.log('기존 리뷰 업데이트 완료');
+      } else {
+        // 새 리뷰 생성
+        const { error: insertError } = await supabase
+          .from('reviews')
+          .insert({
+            user_id: currentUser.id,
+            restaurant_id: restaurantId,
+            rating: rating,
+            comment: `${rating}점 평가`
+          });
+
+        if (insertError) {
+          console.error('리뷰 저장 실패:', insertError);
+          alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
+          return;
+        }
+        console.log('새 리뷰 저장 완료');
+      }
+
+      // 방문 기록도 함께 저장 (중복 방지)
+      const { data: existingVisit, error: visitCheckError } = await supabase
+        .from('visits')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .eq('restaurant_id', restaurantId)
+        .single();
+
+      if (visitCheckError && visitCheckError.code !== 'PGRST116') {
+        console.error('기존 방문 기록 확인 실패:', visitCheckError);
+      }
+
+      if (!existingVisit) {
+        // 방문 기록이 없으면 새로 생성
+        const { error: visitError } = await supabase
+          .from('visits')
+          .insert({
+            user_id: currentUser.id,
+            restaurant_id: restaurantId,
+            rating: rating,
+            review: `${rating}점 평가`
+          });
+
+        if (visitError) {
+          console.error('방문 기록 저장 실패:', visitError);
+        } else {
+          console.log('방문 기록 저장 완료');
+        }
       }
 
       // 성공 시 상태 업데이트
@@ -163,7 +213,7 @@ function Favorites() {
       localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
       setShowRatingModal(false);
       setSelectedRestaurant(null);
-      alert('평점과 방문 기록이 저장되었습니다! ⭐');
+      alert('평점이 저장되었습니다! ⭐');
       console.log('Supabase에 평점 저장 완료');
     } catch (error) {
       console.error('평점 저장 중 오류:', error);

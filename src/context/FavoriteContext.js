@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { supabase } from '../services/supabase';
 
 const FavoriteContext = createContext();
 
@@ -16,9 +17,9 @@ export const FavoriteProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { currentUser: user } = useAuth();
 
-  // 사용자 즐겨찾기 목록 불러오기
+  // 사용자 즐겨찾기 목록 불러오기 (Supabase에서)
   const loadFavorites = async () => {
-    console.log('loadFavorites 호출됨, 사용자:', user); // 디버깅용
+    console.log('loadFavorites 호출됨, 사용자:', user);
     if (!user) {
       console.log('사용자가 없어서 loadFavorites 중단');
       return;
@@ -26,17 +27,26 @@ export const FavoriteProvider = ({ children }) => {
     
     try {
       setLoading(true);
-      // 로컬 스토리지에서 즐겨찾기 불러오기
-      const savedFavorites = localStorage.getItem(`favorites_${user.id}`);
-      if (savedFavorites) {
-        const restaurants = JSON.parse(savedFavorites);
-        console.log('로컬 즐겨찾기 목록:', restaurants);
-        console.log('레스토랑 개수:', restaurants.length);
-        setFavorites(restaurants);
-      } else {
-        console.log('저장된 즐겨찾기 없음');
+      
+      // Supabase에서 사용자의 찜 목록 가져오기
+      const { data: favoritesData, error } = await supabase
+        .from('favorites')
+        .select(`
+          *,
+          restaurants (*)
+        `)
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Supabase에서 찜 목록 불러오기 실패:', error);
         setFavorites([]);
+        return;
       }
+      
+      // restaurants 정보를 포함한 찜 목록 생성
+      const restaurants = favoritesData.map(fav => fav.restaurants);
+      console.log('Supabase에서 찜 목록 로드 완료:', restaurants.length, '개');
+      setFavorites(restaurants);
     } catch (error) {
       console.error('즐겨찾기 목록 불러오기 실패:', error);
       setFavorites([]);
@@ -57,7 +67,7 @@ export const FavoriteProvider = ({ children }) => {
     }
   }, [user]);
 
-  // 찜 목록에 추가
+  // 찜 목록에 추가 (Supabase에 저장)
   const addToFavorites = async (restaurant) => {
     if (!user) {
       alert('로그인이 필요합니다.');
@@ -73,12 +83,24 @@ export const FavoriteProvider = ({ children }) => {
     try {
       console.log('즐겨찾기 추가 시작:', restaurant.id, '사용자:', user.id);
       
-      // 로컬 스토리지에 즐겨찾기 추가
+      // Supabase에 찜하기 저장
+      const { error } = await supabase
+        .from('favorites')
+        .insert({
+          user_id: user.id,
+          restaurant_id: restaurant.id,
+          created_at: new Date().toISOString()
+        });
+      
+      if (error) {
+        console.error('Supabase 찜하기 저장 실패:', error);
+        alert('찜하기 저장에 실패했습니다.');
+        return;
+      }
+      
+      // 상태 업데이트
       const newFavorites = [...favorites, restaurant];
       setFavorites(newFavorites);
-      
-      // 로컬 스토리지에 저장
-      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
       
       console.log('즐겨찾기 추가 성공:', restaurant.id);
       alert('찜 목록에 추가되었습니다! 🎉');
@@ -88,7 +110,7 @@ export const FavoriteProvider = ({ children }) => {
     }
   };
 
-  // 찜 목록에서 제거
+  // 찜 목록에서 제거 (Supabase에서 삭제)
   const removeFromFavorites = async (restaurantId) => {
     console.log('removeFromFavorites 호출됨:', restaurantId, '사용자:', user);
     if (!user) {
@@ -99,12 +121,22 @@ export const FavoriteProvider = ({ children }) => {
     try {
       console.log('즐겨찾기 제거 시작:', restaurantId, '사용자:', user.id);
       
-      // 상태 즉시 업데이트 - restaurantId로 필터링
+      // Supabase에서 찜하기 삭제
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('restaurant_id', restaurantId);
+      
+      if (error) {
+        console.error('Supabase 찜하기 삭제 실패:', error);
+        alert('찜하기 삭제에 실패했습니다.');
+        return;
+      }
+      
+      // 상태 업데이트
       const newFavorites = favorites.filter(fav => fav.id !== restaurantId);
       setFavorites(newFavorites);
-      
-      // 로컬 스토리지에 저장
-      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
       
       console.log('즐겨찾기 제거 성공:', restaurantId);
       alert('찜 목록에서 제거되었습니다! ❌');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../context/FavoriteContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabase';
 import './Favorites.css';
 
 function Favorites() {
@@ -21,23 +22,31 @@ function Favorites() {
   const [showVisitConfirmModal, setShowVisitConfirmModal] = useState(false);
   const [pendingRating, setPendingRating] = useState(null);
 
-  // 사용자 평점 불러오기
+  // 사용자 평점 불러오기 (Supabase 직접 연결)
   const loadUserRatings = async () => {
     if (!currentUser) return;
     
     try {
-      const response = await fetch(`http://localhost:8080/api/reviews/user/${currentUser.id}`);
-      if (response.ok) {
-        const reviews = await response.json();
-        const ratingsMap = {};
-        reviews.forEach(review => {
-          ratingsMap[review.restaurant.id] = {
-            ...ratingsMap[review.restaurant.id],
-            [currentUser.id]: review.rating
-          };
-        });
-        setUserRatings(ratingsMap);
+      // Supabase에서 사용자 리뷰 가져오기
+      const { data: reviews, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('user_id', currentUser.id);
+      
+      if (error) {
+        console.error('평점 불러오기 실패:', error);
+        return;
       }
+      
+      const ratingsMap = {};
+      reviews.forEach(review => {
+        ratingsMap[review.restaurant_id] = {
+          ...ratingsMap[review.restaurant_id],
+          [currentUser.id]: review.rating
+        };
+      });
+      setUserRatings(ratingsMap);
+      console.log('Supabase에서 평점 로드 완료:', reviews.length, '개');
     } catch (error) {
       console.error('평점 불러오기 실패:', error);
     }
@@ -100,7 +109,7 @@ function Favorites() {
     setPendingRating(null);
   };
 
-  // 사용자 평점 처리
+  // 사용자 평점 처리 (Supabase 직접 연결)
   const handleRatingSubmit = async (restaurantId, rating) => {
     if (!currentUser) {
       alert('평점을 남기려면 로그인이 필요합니다.');
@@ -110,56 +119,52 @@ function Favorites() {
     console.log('평점 저장 시도:', { currentUser, restaurantId, rating });
 
     try {
-      // 방문 기록 저장
-      const visitResponse = await fetch('http://localhost:8080/api/visits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          restaurantId: restaurantId,
-          visitDate: new Date().toISOString(),
+      // Supabase에 방문 기록 저장
+      const { error: visitError } = await supabase
+        .from('visits')
+        .insert({
+          user_id: currentUser.id,
+          restaurant_id: restaurantId,
+          visit_date: new Date().toISOString(),
           rating: rating,
           comment: `${rating}점 평가`
-        })
-      });
+        });
 
-      if (!visitResponse.ok) {
-        console.error('방문 기록 저장 실패:', visitResponse.status);
+      if (visitError) {
+        console.error('방문 기록 저장 실패:', visitError);
       }
 
-      // 백엔드 API로 평점 저장
-      const response = await fetch('http://localhost:8080/api/reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          restaurantId: restaurantId,
+      // Supabase에 리뷰 저장
+      const { error: reviewError } = await supabase
+        .from('reviews')
+        .insert({
+          user_id: currentUser.id,
+          restaurant_id: restaurantId,
           rating: rating,
           comment: `${rating}점 평가`
-        })
-      });
+        });
 
-      if (response.ok) {
-        const newUserRatings = {
-          ...userRatings,
-          [restaurantId]: {
-            ...userRatings[restaurantId],
-            [currentUser.id]: rating
-          }
-        };
-
-        setUserRatings(newUserRatings);
-        localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
-        setShowRatingModal(false);
-        setSelectedRestaurant(null);
-        alert('평점과 방문 기록이 저장되었습니다! ⭐');
-      } else {
+      if (reviewError) {
+        console.error('리뷰 저장 실패:', reviewError);
         alert('평점 저장에 실패했습니다. 다시 시도해주세요.');
+        return;
       }
+
+      // 성공 시 상태 업데이트
+      const newUserRatings = {
+        ...userRatings,
+        [restaurantId]: {
+          ...userRatings[restaurantId],
+          [currentUser.id]: rating
+        }
+      };
+
+      setUserRatings(newUserRatings);
+      localStorage.setItem('userRatings', JSON.stringify(newUserRatings));
+      setShowRatingModal(false);
+      setSelectedRestaurant(null);
+      alert('평점과 방문 기록이 저장되었습니다! ⭐');
+      console.log('Supabase에 평점 저장 완료');
     } catch (error) {
       console.error('평점 저장 중 오류:', error);
       alert('평점 저장 중 오류가 발생했습니다.');

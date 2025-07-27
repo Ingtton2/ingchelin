@@ -29,9 +29,6 @@ function KakaoMap() {
   const [markers, setMarkers] = useState([]);
   const [labels, setLabels] = useState([]);
   
-  // 마커 상태 필터 추가
-  const [selectedMarkerStatus, setSelectedMarkerStatus] = useState(['favorited', 'liked', 'disliked', 'not-visited']);
-  
   // 미니 팝업 상태 추가
   const [miniPopup, setMiniPopup] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
@@ -66,13 +63,7 @@ function KakaoMap() {
   // 카테고리 옵션
   const categories = ['한식', '중식', '일식', '양식', '분식', '태국', '술', '카페', '디저트'];
   
-  // 마커 상태 옵션
-  const markerStatusOptions = [
-    { value: 'favorited', label: '찜한 맛집', color: '#FF3B30', icon: '❤️' },
-    { value: 'liked', label: '방문한 곳 (좋았던 곳)', color: '#007AFF', icon: '👍' },
-    { value: 'disliked', label: '방문한 곳 (별로인 곳)', color: '#8E8E93', icon: '👎' },
-    { value: 'not-visited', label: '안 가본 곳', color: '#FF6B6B', icon: '❓' }
-  ];
+
 
   // Supabase에서 레스토랑 데이터 가져오기
   const fetchRestaurants = async () => {
@@ -375,19 +366,7 @@ function KakaoMap() {
     return icons[category] || '🍽️';
   };
 
-  // 마커 상태 토글 함수
-  const toggleMarkerStatus = (status) => {
-    setSelectedMarkerStatus(prev => 
-      prev.includes(status) 
-        ? prev.filter(s => s !== status)
-        : [...prev, status]
-    );
-  };
 
-  // 모든 마커 상태 토글 함수
-  const toggleAllMarkerStatus = () => {
-    setSelectedMarkerStatus(selectedMarkerStatus.length === markerStatusOptions.length ? [] : markerStatusOptions.map(option => option.value));
-  };
 
   // 카카오맵 초기화 함수
   const initKakaoMap = () => {
@@ -714,28 +693,7 @@ function KakaoMap() {
             ))}
           </div>
           
-          {/* 마커 상태 필터 */}
-          <div className="marker-status-filters">
-            <h4>🌟 맛집 상태 필터</h4>
-            <button 
-              onClick={toggleAllMarkerStatus}
-              className="toggle-all-btn"
-            >
-              {selectedMarkerStatus.length === markerStatusOptions.length ? '전체 해제' : '전체 선택'}
-            </button>
-          </div>
-          <div className="marker-status-options">
-            {markerStatusOptions.map(option => (
-              <button
-                key={option.value}
-                onClick={() => toggleMarkerStatus(option.value)}
-                className={`marker-status-option ${selectedMarkerStatus.includes(option.value) ? 'active' : ''}`}
-                data-status={option.value}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+
           
           {/* 선택된 맛집 정보 */}
           {selectedRestaurant && (

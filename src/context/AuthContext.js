@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../services/supabase';
 
 const AuthContext = createContext();
 
@@ -25,57 +26,85 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (email, password, username) => {
     try {
-      // 기존 사용자 확인
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const existingUser = existingUsers.find(user => user.email === email);
+      // Supabase에서 기존 사용자 확인
+      const { data: existingUsers, error: checkError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email);
       
-      if (existingUser) {
+      if (checkError) {
+        console.error('사용자 확인 오류:', checkError);
+        throw new Error('사용자 확인 중 오류가 발생했습니다.');
+      }
+
+      if (existingUsers && existingUsers.length > 0) {
         throw new Error('이미 존재하는 이메일입니다.');
       }
 
-      // 새 사용자 생성
-      const newUser = {
-        id: Date.now().toString(),
-        email,
-        username,
-        createdAt: new Date().toISOString()
-      };
+      // 새 사용자 생성 (Supabase에 저장)
+      const { data: newUser, error: insertError } = await supabase
+        .from('users')
+        .insert([
+          {
+            username,
+            email,
+            password: password // 실제 프로덕션에서는 해시된 비밀번호 사용
+          }
+        ])
+        .select()
+        .single();
 
-      // 사용자 목록에 추가
-      existingUsers.push(newUser);
-      localStorage.setItem('users', JSON.stringify(existingUsers));
+      if (insertError) {
+        console.error('사용자 생성 오류:', insertError);
+        throw new Error('회원가입 중 오류가 발생했습니다.');
+      }
 
-      // 현재 사용자로 설정
+      // 로컬 스토리지에도 저장
       localStorage.setItem('user', JSON.stringify(newUser));
       setCurrentUser(newUser);
+      
+      console.log('회원가입 성공:', newUser);
       return newUser;
     } catch (error) {
+      console.error('회원가입 오류:', error);
       throw error;
     }
   };
 
   const login = async (email, password) => {
     try {
-      // 저장된 사용자 목록에서 확인
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === email);
+      // Supabase에서 사용자 확인
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email);
       
-      if (!user) {
+      if (error) {
+        console.error('로그인 확인 오류:', error);
+        throw new Error('로그인 확인 중 오류가 발생했습니다.');
+      }
+
+      if (!users || users.length === 0) {
         throw new Error('존재하지 않는 이메일입니다.');
       }
+
+      const user = users[0];
 
       // 테스트 계정 확인 (비밀번호 검증 생략)
       if (email === 'test@test.com' && password === '123456') {
         localStorage.setItem('user', JSON.stringify(user));
         setCurrentUser(user);
+        console.log('테스트 계정 로그인 성공:', user);
         return user;
       }
 
       // 일반 계정은 비밀번호 검증 없이 로그인 허용 (데모용)
       localStorage.setItem('user', JSON.stringify(user));
       setCurrentUser(user);
+      console.log('로그인 성공:', user);
       return user;
     } catch (error) {
+      console.error('로그인 오류:', error);
       throw error;
     }
   };
@@ -83,6 +112,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('user');
     setCurrentUser(null);
+    console.log('로그아웃 완료');
   };
 
   const value = {

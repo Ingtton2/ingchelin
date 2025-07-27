@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFavorites } from '../context/FavoriteContext';
+import { supabase } from '../services/supabase';
+import { restaurantData } from '../data/restaurantData';
 
 const LocationBasedRecommendation = () => {
   const [userLocation, setUserLocation] = useState(null);
@@ -24,32 +26,73 @@ const LocationBasedRecommendation = () => {
     return distance;
   };
 
-  // 백엔드에서 레스토랑 데이터 가져오기
+  // Supabase에서 레스토랑 데이터 가져오기
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/restaurants');
-      if (!response.ok) {
-        throw new Error('레스토랑 정보를 불러오는데 실패했습니다.');
+      // Supabase에서 레스토랑 데이터 가져오기
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('*');
+      
+      if (error) {
+        console.warn('Supabase 연결 실패, 기본 데이터 사용:', error);
+        // 기본 데이터 반환
+        return restaurantData.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          cuisine: restaurant.category,
+          rating: restaurant.rating,
+          address: restaurant.address,
+          description: restaurant.description,
+          latitude: restaurant.position.lat,
+          longitude: restaurant.position.lng,
+          phone: restaurant.phone,
+          parking: restaurant.parking,
+          businessHours: restaurant.hours,
+          totalRatings: Math.floor(Math.random() * 100) + 10 // 임시 데이터
+        }));
       }
-      const data = await response.json();
       
-      // 방문 수 데이터 가져오기
-      const visitCountsResponse = await fetch('http://localhost:8080/api/visits/count/all');
-      let visitCounts = {};
-      if (visitCountsResponse.ok) {
-        visitCounts = await visitCountsResponse.json();
+      // Supabase 데이터가 있으면 사용, 없으면 기본 데이터 사용
+      if (data && data.length > 0) {
+        console.log('Supabase 데이터 사용:', data.length, '개 레스토랑');
+        return data.map(restaurant => ({
+          ...restaurant,
+          totalRatings: Math.floor(Math.random() * 100) + 10 // 임시 데이터
+        }));
+      } else {
+        console.log('Supabase 데이터 없음, 기본 데이터 사용');
+        return restaurantData.map(restaurant => ({
+          id: restaurant.id,
+          name: restaurant.name,
+          cuisine: restaurant.category,
+          rating: restaurant.rating,
+          address: restaurant.address,
+          description: restaurant.description,
+          latitude: restaurant.position.lat,
+          longitude: restaurant.position.lng,
+          phone: restaurant.phone,
+          parking: restaurant.parking,
+          businessHours: restaurant.hours,
+          totalRatings: Math.floor(Math.random() * 100) + 10 // 임시 데이터
+        }));
       }
-      
-      // 방문 수 데이터를 레스토랑 데이터에 추가
-      const restaurantsWithVisitCounts = data.map(restaurant => ({
-        ...restaurant,
-        totalRatings: visitCounts[restaurant.id] || 0
-      }));
-      
-      return restaurantsWithVisitCounts;
     } catch (error) {
-      console.error('Failed to fetch restaurants:', error);
-      throw error;
+      console.warn('API 호출 실패, 기본 데이터 사용:', error);
+      return restaurantData.map(restaurant => ({
+        id: restaurant.id,
+        name: restaurant.name,
+        cuisine: restaurant.category,
+        rating: restaurant.rating,
+        address: restaurant.address,
+        description: restaurant.description,
+        latitude: restaurant.position.lat,
+        longitude: restaurant.position.lng,
+        phone: restaurant.phone,
+        parking: restaurant.parking,
+        businessHours: restaurant.hours,
+        totalRatings: Math.floor(Math.random() * 100) + 10 // 임시 데이터
+      }));
     }
   };
 
@@ -70,7 +113,7 @@ const LocationBasedRecommendation = () => {
           const { latitude, longitude } = position.coords;
           setUserLocation({ lat: latitude, lng: longitude });
           
-          // 백엔드에서 레스토랑 데이터 가져오기
+          // Supabase에서 레스토랑 데이터 가져오기
           const restaurants = await fetchRestaurants();
           
           // 가까운 식당 찾기 (위도/경도가 있는 경우만)
@@ -87,7 +130,7 @@ const LocationBasedRecommendation = () => {
                 ...restaurant,
                 distance: distance,
                 position: { lat: restaurant.latitude, lng: restaurant.longitude },
-                businessHours: "11:00 - 22:00", // 임시 데이터
+                businessHours: restaurant.businessHours || "11:00 - 22:00",
               };
             });
 
@@ -98,7 +141,7 @@ const LocationBasedRecommendation = () => {
               ...restaurant,
               distance: Math.random() * 10 + 1, // 임시 거리 (1-11km)
               position: restaurant.position || { lat: 37.5665, lng: 126.9780 }, // 기존 position 사용 또는 기본값
-              businessHours: "11:00 - 22:00",
+              businessHours: restaurant.businessHours || "11:00 - 22:00",
             }));
 
           const allRestaurants = [...restaurantsWithDistance, ...restaurantsWithoutLocation];
@@ -108,9 +151,11 @@ const LocationBasedRecommendation = () => {
             .sort((a, b) => a.distance - b.distance)
             .slice(0, 3); // 상위 3개만 추천
 
+          console.log('주변 맛집 추천:', sortedRestaurants);
           setNearbyRestaurants(sortedRestaurants);
           setLoading(false);
         } catch (error) {
+          console.error('레스토랑 정보 로딩 오류:', error);
           setError('레스토랑 정보를 불러오는데 실패했습니다.');
           setLoading(false);
         }
@@ -155,8 +200,6 @@ const LocationBasedRecommendation = () => {
     }
     return stars;
   };
-
-
 
   // 찜하기 버튼 클릭 핸들러 (토글 기능)
   const handleFavorite = (restaurant) => {
@@ -236,13 +279,10 @@ const LocationBasedRecommendation = () => {
               
               <div className="restaurant-meta">
                 <p>📍 {restaurant.address}</p>
-
                 <p>🕒 {restaurant.businessHours}</p>
                 <p>📞 {restaurant.phone}</p>
-                <p>🚗 {restaurant.parking}</p>
+                <p>🚗 {restaurant.parking ? '주차 가능' : '주차 불가'}</p>
               </div>
-
-
               
               <div className="nearby-actions">
                 <button 
@@ -288,18 +328,15 @@ const LocationBasedRecommendation = () => {
                 
                 <div className="restaurant-details">
                   <p><strong>📍 주소:</strong> {selectedRestaurant.address}</p>
-
                   <p><strong>🕒 영업시간:</strong> {selectedRestaurant.businessHours}</p>
                   <p><strong>📞 전화번호:</strong> {selectedRestaurant.phone}</p>
-                  <p><strong>🚗 주차:</strong> {selectedRestaurant.parking}</p>
+                  <p><strong>🚗 주차:</strong> {selectedRestaurant.parking ? '주차 가능' : '주차 불가'}</p>
                 </div>
                 
                 <div className="restaurant-description">
                   <p><strong>📝 소개:</strong></p>
                   <p>{selectedRestaurant.description}</p>
                 </div>
-
-
               </div>
             </div>
             

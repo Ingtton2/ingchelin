@@ -391,6 +391,7 @@ function KakaoMap() {
 
   // 카카오맵 초기화 함수
   const initKakaoMap = () => {
+    // 카카오맵 API 로드 확인
     if (window.kakao && window.kakao.maps) {
       const container = document.getElementById('map');
       if (!container) {
@@ -405,44 +406,41 @@ function KakaoMap() {
             const { latitude, longitude } = position.coords;
             console.log('사용자 위치:', latitude, longitude);
             
-            // 사용자 위치로 지도 초기화
-            const options = {
-              center: new window.kakao.maps.LatLng(latitude, longitude),
-              level: 6
-            };
-            
-            const map = new window.kakao.maps.Map(container, options);
-            setMapInstance(map);
-            setMapLoaded(true);
-            setUserLocation({ lat: latitude, lng: longitude });
-            
-            // 사용자 위치 마커 추가
-            const userMarker = new window.kakao.maps.Marker({
-              position: new window.kakao.maps.LatLng(latitude, longitude),
-              image: new window.kakao.maps.MarkerImage(
-                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgMjBDNy41OSAyMCA0IDE2LjQxIDQgMTJDNCA3LjU5IDcuNTkgNCAxMiA0QzE2LjQxIDQgMjAgNy41OSAyMCAxMkMyMCAxNi40MSAxNi40MSAyMCAxMiAyMFoiIGZpbGw9IiM2Njc5ZWEiLz4KPHBhdGggZD0iTTEyIDZDNi40OCA2IDIgMTAuNDggMiAxNkMyIDIxLjUyIDYuNDggMjYgMTIgMjZDNy41OSAyNiA0IDIyLjQxIDQgMThDNCAxMy41OSA3LjU5IDEwIDEyIDEwQzE2LjQxIDEwIDIwIDEzLjU5IDIwIDE4QzIwIDIyLjQxIDE2LjQxIDI2IDEyIDI2WiIgZmlsbD0iIzY2NzllYSIvPgo8L3N2Zz4K',
-                new window.kakao.maps.Size(30, 30)
-              )
-            });
-            
-            userMarker.setMap(map);
-            setUserMarker(userMarker);
-            
-            console.log('카카오맵 초기화 완료 (사용자 위치 기반)');
+            try {
+              // 사용자 위치로 지도 초기화
+              const options = {
+                center: new window.kakao.maps.LatLng(latitude, longitude),
+                level: 6
+              };
+              
+              const map = new window.kakao.maps.Map(container, options);
+              setMapInstance(map);
+              setMapLoaded(true);
+              setUserLocation({ lat: latitude, lng: longitude });
+              
+              // 사용자 위치 마커 추가
+              const userMarker = new window.kakao.maps.Marker({
+                position: new window.kakao.maps.LatLng(latitude, longitude),
+                image: new window.kakao.maps.MarkerImage(
+                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTIgMjBDNy41OSAyMCA0IDE2LjQxIDQgMTJDNCA3LjU5IDcuNTkgNCAxMiA0QzE2LjQxIDQgMjAgNy41OSAyMCAxMkMyMCAxNi40MSAxNi40MSAyMCAxMiAyMFoiIGZpbGw9IiM2Njc5ZWEiLz4KPHBhdGggZD0iTTEyIDZDNi40OCA2IDIgMTAuNDggMiAxNkMyIDIxLjUyIDYuNDggMjYgMTIgMjZDNy41OSAyNiA0IDIyLjQxIDQgMThDNCAxMy41OSA3LjU5IDEwIDEyIDEwQzE2LjQxIDEwIDIwIDEzLjU5IDIwIDE4QzIwIDIyLjQxIDE2LjQxIDI2IDEyIDI2WiIgZmlsbD0iIzY2NzllYSIvPgo8L3N2Zz4K',
+                  new window.kakao.maps.Size(30, 30)
+                )
+              });
+              
+              userMarker.setMap(map);
+              setUserMarker(userMarker);
+              
+              console.log('카카오맵 초기화 완료 (사용자 위치 기반)');
+            } catch (error) {
+              console.error('카카오맵 초기화 오류:', error);
+              // 에러 발생 시 기본 위치로 초기화
+              initKakaoMapWithDefaultLocation();
+            }
           },
           (error) => {
             console.log('위치 정보를 가져올 수 없습니다:', error);
             // 위치 정보를 가져올 수 없으면 기본 위치로 초기화
-            const options = {
-              center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
-              level: 6
-            };
-            
-            const map = new window.kakao.maps.Map(container, options);
-            setMapInstance(map);
-            setMapLoaded(true);
-            
-            console.log('카카오맵 초기화 완료 (기본 위치)');
+            initKakaoMapWithDefaultLocation();
           },
           {
             enableHighAccuracy: true,
@@ -452,21 +450,52 @@ function KakaoMap() {
         );
       } else {
         // 위치 정보를 지원하지 않으면 기본 위치로 초기화
-        const options = {
-          center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
-          level: 6
-        };
-        
-        const map = new window.kakao.maps.Map(container, options);
-        setMapInstance(map);
-        setMapLoaded(true);
-        
-        console.log('카카오맵 초기화 완료 (기본 위치)');
+        initKakaoMapWithDefaultLocation();
       }
     } else {
       console.error('카카오맵 API가 로드되지 않았습니다.');
       // 1초 후 다시 시도
       setTimeout(initKakaoMap, 1000);
+    }
+  };
+
+  // 기본 위치로 지도 초기화하는 함수
+  const initKakaoMapWithDefaultLocation = () => {
+    try {
+      const container = document.getElementById('map');
+      if (!container) {
+        console.error('지도 컨테이너를 찾을 수 없습니다.');
+        return;
+      }
+
+      const options = {
+        center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청
+        level: 6
+      };
+      
+      const map = new window.kakao.maps.Map(container, options);
+      setMapInstance(map);
+      setMapLoaded(true);
+      
+      console.log('카카오맵 초기화 완료 (기본 위치)');
+    } catch (error) {
+      console.error('카카오맵 기본 위치 초기화 오류:', error);
+      // 최종 폴백: 지도 컨테이너에 에러 메시지 표시
+      const container = document.getElementById('map');
+      if (container) {
+        container.innerHTML = `
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; background-color: #f5f5f5; color: #666;">
+            <div style="text-align: center;">
+              <h3>🗺️ 지도를 불러올 수 없습니다</h3>
+              <p>카카오맵 API 연결에 문제가 있습니다.</p>
+              <p>잠시 후 다시 시도해주세요.</p>
+              <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                새로고침
+              </button>
+            </div>
+          </div>
+        `;
+      }
     }
   };
 

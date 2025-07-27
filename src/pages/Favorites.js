@@ -174,18 +174,26 @@ function Favorites() {
         console.log('기존 리뷰 업데이트 완료');
       } else {
         console.log('새 리뷰 생성 시작');
-        // 새 리뷰 생성
+        // 새 리뷰 생성 - 모든 필수 필드 포함
         const { error: insertError } = await supabase
           .from('reviews')
           .insert({
             user_id: userId,
             restaurant_id: restaurantIdInt,
             rating: ratingInt,
-            comment: `${ratingInt}점 평가`
+            comment: `${ratingInt}점 평가`,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           });
 
         if (insertError) {
           console.error('리뷰 저장 실패:', insertError);
+          console.error('에러 상세 정보:', {
+            code: insertError.code,
+            message: insertError.message,
+            details: insertError.details,
+            hint: insertError.hint
+          });
           alert(`평점 저장에 실패했습니다: ${insertError.message}`);
           return;
         }
@@ -209,18 +217,25 @@ function Favorites() {
 
       if (!existingVisit) {
         console.log('새 방문 기록 생성 시작');
-        // 방문 기록이 없으면 새로 생성
+        // 방문 기록이 없으면 새로 생성 - 모든 필수 필드 포함
         const { error: visitError } = await supabase
           .from('visits')
           .insert({
             user_id: userId,
             restaurant_id: restaurantIdInt,
             rating: ratingInt,
-            review: `${ratingInt}점 평가`
+            review: `${ratingInt}점 평가`,
+            created_at: new Date().toISOString()
           });
 
         if (visitError) {
           console.error('방문 기록 저장 실패:', visitError);
+          console.error('방문 기록 에러 상세 정보:', {
+            code: visitError.code,
+            message: visitError.message,
+            details: visitError.details,
+            hint: visitError.hint
+          });
           // 방문 기록 실패는 경고만 표시하고 계속 진행
           console.warn('방문 기록 저장 실패했지만 리뷰는 저장됨');
         } else {

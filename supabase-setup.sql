@@ -3,6 +3,14 @@
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Disable Row Level Security for all tables (for development)
+ALTER TABLE restaurants DISABLE ROW LEVEL SECURITY;
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE categories DISABLE ROW LEVEL SECURITY;
+ALTER TABLE favorites DISABLE ROW LEVEL SECURITY;
+ALTER TABLE visits DISABLE ROW LEVEL SECURITY;
+ALTER TABLE reviews DISABLE ROW LEVEL SECURITY;
+
 -- Create restaurants table
 CREATE TABLE IF NOT EXISTS restaurants (
     id BIGSERIAL PRIMARY KEY,

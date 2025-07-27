@@ -1,10 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://ddhrabdtbwzdmukbkixo.supabase.co';
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkaHJhYmR0Ynd6ZG11a2JraXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNjE4NTcsImV4cCI6MjA2ODYzNzg1N30.Z5QGluZn2yTPzkqNgklAKkegrPKaVrcAlu3eczMSISo';
+// 환경변수에서 Supabase 설정 가져오기
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+// 환경변수가 없으면 개발용 폴백 사용
+const fallbackUrl = 'https://ddhrabdtbwzdmukbkixo.supabase.co';
+const fallbackKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkaHJhYmR0Ynd6ZG11a2JraXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNjE4NTcsImV4cCI6MjA2ODYzNzg1N30.Z5QGluZn2yTPzkqNgklAKkegrPKaVrcAlu3eczMSISo';
+
+// 실제 사용할 URL과 키 결정
+const finalUrl = supabaseUrl || fallbackUrl;
+const finalKey = supabaseAnonKey || fallbackKey;
+
+console.log('Supabase 설정:', {
+  hasEnvUrl: !!supabaseUrl,
+  hasEnvKey: !!supabaseAnonKey,
+  finalUrl: finalUrl,
+  isUsingFallback: !supabaseUrl || !supabaseAnonKey
+});
 
 // 실제 Supabase 클라이언트 생성
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(finalUrl, finalKey);
 
 export { supabase };
 

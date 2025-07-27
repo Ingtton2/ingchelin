@@ -17,6 +17,49 @@ export const FavoriteProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { currentUser: user } = useAuth();
 
+  // 로컬 스토리지 완전 정리 함수
+  const clearLocalStorage = () => {
+    console.log('🔧 로컬 스토리지 정리 시작...');
+    
+    // 찜 관련 데이터 정리
+    const keysToRemove = [
+      'favorites',
+      'userRatings', 
+      'visits',
+      'user'
+    ];
+    
+    keysToRemove.forEach(key => {
+      if (localStorage.getItem(key)) {
+        console.log(`🗑️ ${key} 삭제됨`);
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // 사용자별 찜 데이터도 정리
+    if (user) {
+      const userSpecificKeys = [
+        `visits_${user.id}`,
+        `favorites_${user.id}`,
+        `ratings_${user.id}`
+      ];
+      
+      userSpecificKeys.forEach(key => {
+        if (localStorage.getItem(key)) {
+          console.log(`🗑️ ${key} 삭제됨`);
+          localStorage.removeItem(key);
+        }
+      });
+    }
+    
+    console.log('✅ 로컬 스토리지 정리 완료');
+  };
+
+  // 컴포넌트 마운트 시 로컬 스토리지 정리
+  useEffect(() => {
+    clearLocalStorage();
+  }, []);
+
   // 사용자 즐겨찾기 목록 불러오기 (Supabase에서)
   const loadFavorites = async () => {
     console.log('loadFavorites 호출됨, 사용자:', user);

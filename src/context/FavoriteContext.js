@@ -162,12 +162,12 @@ export const FavoriteProvider = ({ children }) => {
           hint: error.hint
         });
         alert(`찜하기 저장에 실패했습니다: ${error.message}`);
-        return;
+        return; // 실패 시 로컬 상태 업데이트하지 않음
       }
       
       console.log('Supabase 찜하기 저장 성공:', insertResult);
       
-      // 상태 업데이트
+      // Supabase 저장 성공 시에만 로컬 상태 업데이트
       const newFavorites = [...favorites, restaurant];
       setFavorites(newFavorites);
       
@@ -217,10 +217,10 @@ export const FavoriteProvider = ({ children }) => {
       if (error) {
         console.error('Supabase 찜하기 삭제 실패:', error);
         alert(`찜하기 삭제에 실패했습니다: ${error.message}`);
-        return;
+        return; // 실패 시 로컬 상태 업데이트하지 않음
       }
       
-      // 상태 업데이트
+      // Supabase 삭제 성공 시에만 로컬 상태 업데이트
       const newFavorites = favorites.filter(fav => fav.id !== restaurantId);
       setFavorites(newFavorites);
       

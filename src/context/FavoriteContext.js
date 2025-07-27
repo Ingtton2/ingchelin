@@ -85,7 +85,8 @@ export const FavoriteProvider = ({ children }) => {
         restaurantId: restaurant.id, 
         userId: user.id,
         restaurantIdType: typeof restaurant.id,
-        userIdType: typeof user.id
+        userIdType: typeof user.id,
+        restaurant: restaurant
       });
       
       // 데이터 타입 확인 및 변환
@@ -99,21 +100,72 @@ export const FavoriteProvider = ({ children }) => {
       }
 
       console.log('변환된 데이터:', { userId, restaurantId });
+
+      // Supabase 연결 상태 확인
+      console.log('Supabase 클라이언트 확인:', {
+        supabaseUrl: supabase.supabaseUrl,
+        hasClient: !!supabase
+      });
+
+      // 먼저 restaurants 테이블에 해당 레스토랑이 있는지 확인
+      const { data: existingRestaurant, error: restaurantCheckError } = await supabase
+        .from('restaurants')
+        .select('id')
+        .eq('id', restaurantId)
+        .single();
+
+      console.log('레스토랑 존재 확인:', { existingRestaurant, restaurantCheckError });
+
+      if (restaurantCheckError) {
+        console.error('레스토랑 존재 확인 실패:', restaurantCheckError);
+        alert('레스토랑 정보를 찾을 수 없습니다.');
+        return;
+      }
+
+      // users 테이블에 해당 사용자가 있는지 확인
+      const { data: existingUser, error: userCheckError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      console.log('사용자 존재 확인:', { existingUser, userCheckError });
+
+      if (userCheckError) {
+        console.error('사용자 존재 확인 실패:', userCheckError);
+        alert('사용자 정보를 찾을 수 없습니다.');
+        return;
+      }
       
       // Supabase에 찜하기 저장
-      const { error } = await supabase
+      const insertData = {
+        user_id: userId,
+        restaurant_id: restaurantId,
+        created_at: new Date().toISOString()
+      };
+
+      console.log('삽입할 데이터:', insertData);
+
+      const { data: insertResult, error } = await supabase
         .from('favorites')
-        .insert({
-          user_id: userId,
-          restaurant_id: restaurantId,
-          created_at: new Date().toISOString()
-        });
+        .insert(insertData)
+        .select();
+      
+      console.log('Supabase 삽입 결과:', { insertResult, error });
       
       if (error) {
         console.error('Supabase 찜하기 저장 실패:', error);
+        console.error('에러 상세 정보:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
         alert(`찜하기 저장에 실패했습니다: ${error.message}`);
         return;
       }
+      
+      console.log('Supabase 찜하기 저장 성공:', insertResult);
       
       // 상태 업데이트
       const newFavorites = [...favorites, restaurant];

@@ -28,6 +28,14 @@ export const FavoriteProvider = ({ children }) => {
     try {
       setLoading(true);
       
+      // 로컬 스토리지에서 기존 찜 데이터 정리 (디버깅용)
+      const oldFavorites = localStorage.getItem('favorites');
+      if (oldFavorites) {
+        console.log('기존 로컬 스토리지 찜 데이터 발견:', oldFavorites);
+        localStorage.removeItem('favorites');
+        console.log('로컬 스토리지 찜 데이터 삭제됨');
+      }
+      
       // Supabase에서 사용자의 찜 목록 가져오기
       const { data: favoritesData, error } = await supabase
         .from('favorites')
@@ -46,6 +54,7 @@ export const FavoriteProvider = ({ children }) => {
       // restaurants 정보를 포함한 찜 목록 생성
       const restaurants = favoritesData.map(fav => fav.restaurants);
       console.log('Supabase에서 찜 목록 로드 완료:', restaurants.length, '개');
+      console.log('로드된 찜 목록:', restaurants.map(r => r.name));
       setFavorites(restaurants);
     } catch (error) {
       console.error('즐겨찾기 목록 불러오기 실패:', error);
